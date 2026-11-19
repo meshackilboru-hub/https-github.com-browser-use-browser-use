@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function validProfile(d) {
+      return d.keys().hasOnly(['role', 'displayName', 'university', 'yearOfStudy', 'specialty', 'pgyYear', 'country', 'exam', 'createdAt', 'updatedAt'])
+        && d.role in ['student', 'resident', 'practitioner']
+        && (!('displayName' in d) || (d.displayName is string && d.displayName.size() <= 80))
+        && (!('university' in d) || (d.university is string && d.university.size() <= 160))
+        && (!('specialty' in d) || (d.specialty is string && d.specialty.size() <= 80))
+        && (!('country' in d) || (d.country is string && d.country.size() <= 80))
+        && (!('exam' in d) || (d.exam is string && d.exam.size() <= 60))
+        && (!('yearOfStudy' in d) || (d.yearOfStudy is int && d.yearOfStudy >= 1 && d.yearOfStudy <= 7))
+        && (!('pgyYear' in d) || (d.pgyYear is int && d.pgyYear >= 1 && d.pgyYear <= 8))
+        // Students and residents must name their university or training institution.
+        && (d.role == 'practitioner' || ('university' in d && d.university.size() >= 2));
+    }
+
+    // Each person reads and writes only their own profile. Deletion goes through the deleteAccount function.
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid && validProfile(request.resource.data);
+      allow delete: if false;
+    }
+
+    // Usage counters are written only by Cloud Functions (Admin SDK bypasses these rules).
+    match /usage/{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

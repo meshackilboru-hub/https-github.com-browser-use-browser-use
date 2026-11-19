@@ -1,0 +1,14 @@
+node_modules/
+functions/lib/
+.firebaserc
+*.local
+.env
+.env.*
+!.env.example
+firebase-debug.log
+firestore-debug.log
+mobile/.expo/
+mobile/ios/
+mobile/android/
+mobile/google-services.json
+mobile/GoogleService-Info.plist
