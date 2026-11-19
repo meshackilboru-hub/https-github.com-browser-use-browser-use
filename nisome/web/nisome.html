@@ -1,0 +1,1174 @@
+<title>Nisome</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: study desk. A fixed rail of sections on wide screens (bottom tabs on phones) beside one working pane. */
+:root{
+  --paper:#F2F5F7; --surface:#FFFFFF; --sunk:#E8EDF0; --ink:#13212A; --muted:#5A6B76; --line:#D6DEE3;
+  --accent:#0F6E66; --accent-ink:#FFFFFF; --accent-soft:#DCEFEC;
+  --good:#16803C; --good-soft:#E1F3E7; --bad:#B42318; --bad-soft:#FBE7E5; --warn-soft:#FFF4DB;
+  --f-display:"Bricolage Grotesque","Space Grotesk",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:12px; --rail:228px; --tabbar:62px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0D1418; --surface:#141F25; --sunk:#0F181D; --ink:#E2EAEE; --muted:#8FA1AC; --line:#24343D;
+  --accent:#3FC2AF; --accent-ink:#06201C; --accent-soft:#123630;
+  --good:#5AD48A; --good-soft:#123222; --bad:#F2857A; --bad-soft:#3A1A17; --warn-soft:#3A2E12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0D1418; --surface:#141F25; --sunk:#0F181D; --ink:#E2EAEE; --muted:#8FA1AC; --line:#24343D;
+  --accent:#3FC2AF; --accent-ink:#06201C; --accent-soft:#123630;
+  --good:#5AD48A; --good-soft:#123222; --bad:#F2857A; --bad-soft:#3A1A17; --warn-soft:#3A2E12; color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
+.app{display:grid;grid-template-columns:var(--rail) 1fr;height:100%}
+
+/* rail */
+.rail{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px;padding:18px 12px;padding-left:max(12px,env(safe-area-inset-left,0px))}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 16px}
+.brand b{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.01em;display:block;line-height:1}
+.brand small{color:var(--muted);font-size:12px}
+.nav{display:flex;align-items:center;gap:10px;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:9px;cursor:pointer;color:var(--muted);font-weight:500;text-decoration:none}
+.nav svg{flex:none}
+.nav[aria-current="page"]{background:var(--accent-soft);color:var(--ink)}
+.nav:hover{color:var(--ink)}
+.rail .who{margin-top:auto;font-size:12.5px;color:var(--muted);padding:8px 10px;border-top:1px solid var(--line)}
+
+main{min-width:0;min-height:0;overflow-y:auto;display:flex;flex-direction:column}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:860px;width:100%;margin:0 auto;padding-block:26px 40px;display:flex;flex-direction:column;gap:18px}
+h1{font-family:var(--f-display);font-weight:800;font-size:28px;letter-spacing:-.01em;margin:0;text-wrap:balance;line-height:1.15}
+h2{font-family:var(--f-display);font-weight:600;font-size:19px;margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.err{color:var(--bad)}
+.banner{border-radius:10px;padding:10px 14px;font-size:14px;background:var(--warn-soft)}
+.banner.bad{background:var(--bad-soft)} .banner.info{background:var(--accent-soft)}
+
+/* controls */
+.btn{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:9px 16px;font-weight:600;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.quiet{background:transparent;color:var(--ink);border-color:var(--line);font-weight:500}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+input[type=text],input[type=search],select,textarea{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px}
+textarea{resize:vertical;line-height:1.45}
+label.field{display:flex;flex-direction:column;gap:6px}
+label.field>span{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.seg{display:flex;background:var(--sunk);border-radius:999px;padding:3px;gap:2px;overflow-x:auto}
+.seg button{flex:1;border:0;background:transparent;padding:7px 12px;border-radius:999px;cursor:pointer;color:var(--muted);font-weight:500;white-space:nowrap}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+
+/* library */
+.drop{border:2px dashed var(--line);border-radius:var(--r);padding:26px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;background:var(--surface)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.docs{display:flex;flex-direction:column;gap:8px}
+.doc{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.doc:hover{border-color:var(--accent)}
+.doc .ic{flex:none;width:40px;height:40px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);font-family:var(--f-mono);font-size:11px;font-weight:500}
+.doc .t{flex:1;min-width:0}
+.doc .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.status-error{color:var(--bad)}
+
+/* summary */
+.kp{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.sec{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface);display:flex;flex-direction:column;gap:4px}
+.sec .pg{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.gl dt{font-weight:600}.gl dd{margin:0 0 8px}
+.mastery-row{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums}
+
+/* questions */
+.q{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:12px}
+.q .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px}
+.q .concept{color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.q .due{color:var(--bad);font-weight:600}
+.q .stem{font-weight:500;font-size:16px;margin:0;white-space:pre-wrap}
+.choice{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice .k{flex:none;font-family:var(--f-mono);font-weight:500;width:22px;height:22px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;background:var(--surface)}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.right .k{background:var(--good);border-color:var(--good);color:var(--surface)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.choice.wrong .k{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.result{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.verdict{font-weight:700}
+.verdict.correct{color:var(--good)}.verdict.partial{color:var(--accent)}.verdict.incorrect{color:var(--bad)}
+.correction{background:var(--bad-soft);border-radius:10px;padding:10px 12px}
+.pearl{background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:14px}
+
+/* chat */
+.chat{display:flex;flex-direction:column;min-height:0;flex:1}
+.thread{display:flex;flex-direction:column;gap:16px;padding-block:6px}
+.msg{display:flex;gap:12px;min-width:0}
+.msg.user{justify-content:flex-end}
+.msg.user .bubble{background:var(--accent-soft);border-radius:14px 14px 4px 14px;padding:10px 14px;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere}
+.av{flex:none;width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--paper);font-family:var(--f-display);font-weight:800;display:grid;place-items:center}
+.body{min-width:0;flex:1}
+.composer{position:sticky;bottom:0;background:var(--paper);padding-block:10px;display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line)}
+.composer textarea{min-height:46px;max-height:180px;resize:none}
+.thinking{color:var(--muted);font-style:italic}
+.src{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+
+.md{overflow-wrap:anywhere}
+.md>*:first-child{margin-top:0}.md>*:last-child{margin-bottom:0}
+.md p,.md ul,.md ol{margin:0 0 10px}.md ul,.md ol{padding-left:22px}
+.md h1,.md h2,.md h3{font-family:var(--f-display);font-size:17px;margin:14px 0 6px}
+.md code{font-family:var(--f-mono);font-size:.9em;background:var(--sunk);padding:1px 5px;border-radius:4px}
+.md pre{background:var(--sunk);padding:10px;border-radius:8px;overflow-x:auto}
+.md table{border-collapse:collapse;font-size:13.5px;display:block;overflow-x:auto;margin:0 0 10px}
+.md th,.md td{border:1px solid var(--line);padding:5px 9px;text-align:left;vertical-align:top}
+.md th{background:var(--sunk)}
+.md blockquote{margin:0 0 10px;border-left:3px solid var(--accent);padding-left:12px;color:var(--muted)}
+
+/* videos */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.vcard{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);text-decoration:none;color:var(--ink)}
+.vcard:hover{border-color:var(--accent)}
+.vcard .play{flex:none;width:38px;height:38px;border-radius:50%;background:var(--bad);display:grid;place-items:center}
+.vcard small{display:block;color:var(--muted)}
+
+/* onboarding */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.role{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.role:hover,.role[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.role b{font-family:var(--f-display);font-size:17px}
+.sugg{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden;margin-top:4px}
+.sugg button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;padding:9px 12px;cursor:pointer}
+.sugg button:last-child{border-bottom:0}
+.sugg button:hover{background:var(--sunk)}
+.sugg small{color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.tabbar{display:none}
+@media (prefers-reduced-motion: reduce){.bar i{transition:none}}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr;height:auto;min-height:100%}
+  .rail{display:none}
+  main{overflow:visible;padding-bottom:calc(var(--tabbar) + env(safe-area-inset-bottom,0px))}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:4px max(6px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))}
+  .tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;font-size:11px;color:var(--muted);text-decoration:none}
+  .tabbar a[aria-current="page"]{color:var(--accent);font-weight:600}
+  .composer{bottom:calc(var(--tabbar) + env(safe-area-inset-bottom,0px))}
+  .grid2{grid-template-columns:1fr}
+  h1{font-size:24px}
+}
+</style>
+
+<div class="app">
+  <nav class="rail" aria-label="Sections">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="var(--accent)"/><path d="M9 25V11l9 9 9-9v14" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><b>Nisome</b><small>Let me read.</small></div>
+    </div>
+    <div id="railnav"></div>
+    <div class="who" id="who"></div>
+  </nav>
+  <main id="main"><div class="wrap"><div class="page" id="view"></div></div></main>
+</div>
+<nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
+<input type="file" id="file" accept=".pdf,.docx,.txt,.md,image/jpeg,image/png,image/webp,image/gif,application/pdf" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script id="catalog" type="application/json">{"u":[["Muhimbili University of Health and Allied Sciences (MUHAS)","Tanzania"],["Kilimanjaro Christian Medical University College (KCMUCo)","Tanzania"],["Catholic University of Health and Allied Sciences (CUHAS)","Tanzania"],["University of Dodoma","Tanzania"],["Hubert Kairuki Memorial University","Tanzania"],["State University of Zanzibar","Tanzania"],["Aga Khan University, Dar es Salaam","Tanzania"],["University of Nairobi","Kenya"],["Moi University","Kenya"],["Kenyatta University","Kenya"],["Aga Khan University, Nairobi","Kenya"],["Makerere University","Uganda"],["Mbarara University of Science and Technology","Uganda"],["Gulu University","Uganda"],["University of Rwanda","Rwanda"],["University of Burundi","Burundi"],["Addis Ababa University","Ethiopia"],["University of Gondar","Ethiopia"],["Jimma University","Ethiopia"],["University of Cape Town","South Africa"],["University of the Witwatersrand","South Africa"],["Stellenbosch University","South Africa"],["University of KwaZulu-Natal","South Africa"],["University of Pretoria","South Africa"],["University of Zambia","Zambia"],["Kamuzu University of Health Sciences","Malawi"],["University of Zimbabwe","Zimbabwe"],["University of Botswana","Botswana"],["Eduardo Mondlane University","Mozambique"],["University of Ibadan","Nigeria"],["University of Lagos","Nigeria"],["Obafemi Awolowo University","Nigeria"],["University of Nigeria, Nsukka","Nigeria"],["Ahmadu Bello University","Nigeria"],["University of Ghana","Ghana"],["Kwame Nkrumah University of Science and Technology (KNUST)","Ghana"],["Université Cheikh Anta Diop","Senegal"],["Université de Yaoundé I","Cameroon"],["Cairo University","Egypt"],["Ain Shams University","Egypt"],["Alexandria University","Egypt"],["Université Mohammed V de Rabat","Morocco"],["Université de Tunis El Manar","Tunisia"],["All India Institute of Medical Sciences (AIIMS), New Delhi","India"],["Christian Medical College, Vellore","India"],["Maulana Azad Medical College","India"],["Armed Forces Medical College, Pune","India"],["Kasturba Medical College, Manipal","India"],["Seth GS Medical College and KEM Hospital","India"],["JIPMER, Puducherry","India"],["Aga Khan University, Karachi","Pakistan"],["King Edward Medical University","Pakistan"],["Dow University of Health Sciences","Pakistan"],["Dhaka Medical College","Bangladesh"],["University of Colombo","Sri Lanka"],["Institute of Medicine, Tribhuvan University","Nepal"],["University of the Philippines Manila","Philippines"],["University of Santo Tomas","Philippines"],["Universitas Indonesia","Indonesia"],["University of Malaya","Malaysia"],["National University of Singapore","Singapore"],["Mahidol University","Thailand"],["Hanoi Medical University","Vietnam"],["Peking Union Medical College","China"],["University of Hong Kong","Hong Kong"],["University of Tokyo","Japan"],["Seoul National University","South Korea"],["American University of Beirut","Lebanon"],["King Saud University","Saudi Arabia"],["Tehran University of Medical Sciences","Iran"],["Hacettepe University","Turkey"],["Hebrew University of Jerusalem","Israel"],["University of Oxford","United Kingdom"],["University of Cambridge","United Kingdom"],["Imperial College London","United Kingdom"],["University College London (UCL)","United Kingdom"],["King's College London","United Kingdom"],["University of Edinburgh","United Kingdom"],["University of Manchester","United Kingdom"],["University of Glasgow","United Kingdom"],["Trinity College Dublin","Ireland"],["Royal College of Surgeons in Ireland (RCSI)","Ireland"],["Karolinska Institutet","Sweden"],["Charité – Universitätsmedizin Berlin","Germany"],["Heidelberg University","Germany"],["LMU Munich","Germany"],["Sorbonne Université","France"],["Université Paris Cité","France"],["University of Amsterdam","Netherlands"],["Leiden University","Netherlands"],["KU Leuven","Belgium"],["University of Copenhagen","Denmark"],["University of Oslo","Norway"],["University of Helsinki","Finland"],["University of Zurich","Switzerland"],["Medical University of Vienna","Austria"],["University of Barcelona","Spain"],["University of Milan","Italy"],["Sapienza University of Rome","Italy"],["Jagiellonian University","Poland"],["Charles University","Czech Republic"],["Semmelweis University","Hungary"],["Harvard Medical School","United States"],["Johns Hopkins University School of Medicine","United States"],["Stanford University School of Medicine","United States"],["Perelman School of Medicine, University of Pennsylvania","United States"],["Yale School of Medicine","United States"],["Columbia University Vagelos College of Physicians and Surgeons","United States"],["UCSF School of Medicine","United States"],["David Geffen School of Medicine at UCLA","United States"],["Duke University School of Medicine","United States"],["University of Michigan Medical School","United States"],["Washington University School of Medicine in St. Louis","United States"],["Mayo Clinic Alix School of Medicine","United States"],["NYU Grossman School of Medicine","United States"],["Feinberg School of Medicine, Northwestern University","United States"],["Baylor College of Medicine","United States"],["University of Toronto","Canada"],["McGill University","Canada"],["University of British Columbia","Canada"],["McMaster University","Canada"],["Universidad Nacional Autónoma de México (UNAM)","Mexico"],["St. George's University","Grenada"],["Ross University School of Medicine","Barbados"],["University of the West Indies","Jamaica"],["Universidade de São Paulo (USP)","Brazil"],["Universidad de Buenos Aires","Argentina"],["Pontificia Universidad Católica de Chile","Chile"],["Universidad Nacional de Colombia","Colombia"],["Universidad Peruana Cayetano Heredia","Peru"],["University of Sydney","Australia"],["University of Melbourne","Australia"],["Monash University","Australia"],["University of Queensland","Australia"],["University of Auckland","New Zealand"],["University of Otago","New Zealand"]],"s":["Internal Medicine","Family Medicine","General Practice","Pediatrics","Obstetrics & Gynecology","General Surgery","Orthopedic Surgery","Neurosurgery","Emergency Medicine","Anesthesiology","Critical Care","Cardiology","Pulmonology","Nephrology","Gastroenterology","Endocrinology","Infectious Diseases","Hematology & Oncology","Neurology","Psychiatry","Dermatology","Ophthalmology","Otolaryngology (ENT)","Urology","Radiology","Pathology","Public Health"]}</script>
+<script>
+"use strict";
+/* ================= basics ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const md = (t) => { try { return DOMPurify.sanitize(marked.parse(String(t || ""))); } catch { return esc(t); } };
+const bytes = (s) => new TextEncoder().encode(s).length;
+const uid8 = () => (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, "") : Math.random().toString(36).slice(2) + Date.now().toString(36)).slice(0, 20);
+const LETTERS = "ABCDE";
+const CAT = JSON.parse($("#catalog").textContent);
+const DAY = 86400000;
+const INTERVAL_DAYS = [0, 1, 3, 7, 16, 35];
+const PROMPT_BUDGET = 240000; // stay under the 256 KiB input cap
+const CHUNK_BYTES = 80000;    // one stored part of a document
+const MAX_FILE_MB = 100;
+const MAX_OCR_PAGES = 40;
+
+const ICONS = {
+  library: '<path d="M4 5h4v14H4zM10 5h4v14h-4zM16.5 5.5l3.5 1-3.5 13-3.5-1z"/>',
+  tutor: '<path d="M4 5h16v10H9l-5 4z"/>',
+  practice: '<path d="M5 12l4 4 10-10"/><path d="M4 4h16v16H4z" opacity=".35"/>',
+  videos: '<circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/>',
+  profile: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>',
+};
+const icon = (n, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+const SECTIONS = [["library", "Library"], ["tutor", "Tutor"], ["practice", "Practice"], ["videos", "Videos"], ["profile", "Profile"]];
+
+const S = {
+  sample: null, limits: null, db: null, user: null, uid: null,
+  store: null, saved: false, profile: null, docs: [], docsLoaded: false,
+  route: "library", docId: null, docTab: "summary",
+  processing: {}, // docId -> {label, frac}
+  chunkCache: {}, // docId -> [{i,label,text}]
+  qState: {},     // qid -> {picked, text, grade, busy, err}
+  chats: {},      // key -> [{role, content}]
+  practice: { mode: "questions", subject: "Any", q: null, picked: null, score: { right: 0, total: 0 }, recent: [] },
+  unsubQ: null, questions: [], questionsDoc: null, pinned: new Set(),
+  busy: false,
+};
+try { const sc = JSON.parse(localStorage.getItem("nisome-score") || "null"); if (sc) S.practice.score = sc; } catch {}
+
+const ERR = {
+  not_granted: "You haven't allowed Nisome to use Claude. Reload the page to be asked again.",
+  sampling_disabled: "Claude isn't available on this account.",
+  rate_limited: "You've hit a usage limit for now. Wait a little, then try again.",
+  prompt_too_large: "That's too much text for one request. Ask about a narrower part.",
+  refused: "Claude declined that request. Try rephrasing it as a study question.",
+  invalid_json: "The answer came back incomplete. Try again.",
+  empty_completion: "Claude returned an empty answer. Try again.",
+  session_expired: "Your session expired. Sign in to claude.ai again.",
+  image_rejected: "That image couldn't be read. Try a clearer or smaller photo.",
+  images_unavailable: "Images can't be sent from this view. Upload a PDF or text instead.",
+  quota_exceeded: "Your library storage is full. Delete a document and try again.",
+};
+const errText = (e) => ERR[e?.code] || (e?.message && !e?.code ? e.message : "Couldn't reach Claude. Try again in a moment.");
+
+/* ================= capabilities ================= */
+const use = (n) => (window.claude?.use ? window.claude.use(n).catch(() => null) : Promise.resolve(null));
+const samplePromise = use("sample");
+
+async function ask(input, opts = {}) {
+  const s = await samplePromise;
+  if (!s) throw { code: "unavailable_here", message: "Open Nisome on claude.ai, signed in, to use the AI features." };
+  return s(input, { cache: false, ...opts });
+}
+async function askJSON(input, opts = {}) {
+  const s = await samplePromise;
+  if (!s) throw { code: "unavailable_here", message: "Open Nisome on claude.ai, signed in, to use the AI features." };
+  return s.json(input, { cache: false, ...opts });
+}
+
+/* ================= storage: private per person, or this visit only ================= */
+function memoryStore() {
+  const docs = new Map(), chunks = new Map(), qs = new Map(), docL = new Set(), qL = new Map();
+  let profile = null;
+  const emitDocs = () => { const list = [...docs.values()].sort((a, b) => b.createdAt - a.createdAt); docL.forEach((f) => f(list)); };
+  const emitQ = (id) => { const list = [...(qs.get(id)?.values() ?? [])].sort((a, b) => b.createdAt - a.createdAt); (qL.get(id) ?? new Set()).forEach((f) => f(list)); };
+  return {
+    kind: "memory",
+    async getProfile() { return profile; },
+    async setProfile(p) { profile = p; },
+    watchDocs(cb) { docL.add(cb); emitDocs(); return () => docL.delete(cb); },
+    async setDoc(id, d) { docs.set(id, { id, ...d }); emitDocs(); },
+    async updateDoc(id, d) { const cur = docs.get(id); if (!cur) return; docs.set(id, deepMerge(cur, d)); emitDocs(); },
+    async setChunk(id, i, d) { if (!chunks.has(id)) chunks.set(id, []); chunks.get(id)[i] = d; },
+    async getChunks(id) { return (chunks.get(id) ?? []).filter(Boolean); },
+    watchQuestions(id, cb) { if (!qL.has(id)) qL.set(id, new Set()); qL.get(id).add(cb); emitQ(id); return () => qL.get(id).delete(cb); },
+    async addQuestion(id, q) { if (!qs.has(id)) qs.set(id, new Map()); const qid = uid8(); qs.get(id).set(qid, { id: qid, ...q }); emitQ(id); },
+    async updateQuestion(id, qid, d) { const m = qs.get(id); if (!m?.has(qid)) return; m.set(qid, { ...m.get(qid), ...d }); emitQ(id); },
+    async deleteDoc(id) { docs.delete(id); chunks.delete(id); qs.delete(id); emitDocs(); emitQ(id); },
+  };
+}
+function deepMerge(a, b) {
+  const out = { ...a };
+  for (const [k, v] of Object.entries(b)) out[k] = v && typeof v === "object" && !Array.isArray(v) && a[k] && typeof a[k] === "object" && !Array.isArray(a[k]) ? deepMerge(a[k], v) : v;
+  return out;
+}
+function dbStore(db, uid) {
+  const root = db.doc(`data/users/${uid}/lib`);
+  const col = root.collection("docs");
+  const profileRef = db.doc(`data/users/${uid}/profile`);
+  const snapList = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return {
+    kind: "db",
+    async getProfile() { const s = await profileRef.get(); return s.exists ? s.data() : null; },
+    setProfile(p) { return profileRef.set(p); },
+    watchDocs(cb, err) { return col.orderBy("createdAt", "desc").onSnapshot((s) => cb(snapList(s)), err); },
+    setDoc(id, d) { return col.doc(id).set(d); },
+    updateDoc(id, d) { return col.doc(id).update(d); },
+    setChunk(id, i, d) { return col.doc(id).collection("chunks").doc("c" + String(i).padStart(4, "0")).set(d); },
+    async getChunks(id) { const s = await col.doc(id).collection("chunks").get(); return s.docs.map((d) => d.data()).sort((a, b) => a.i - b.i); },
+    watchQuestions(id, cb, err) { return col.doc(id).collection("questions").orderBy("createdAt", "desc").onSnapshot((s) => cb(snapList(s)), err); },
+    addQuestion(id, q) { return col.doc(id).collection("questions").add(q); },
+    updateQuestion(id, qid, d) { return col.doc(id).collection("questions").doc(qid).update(d); },
+    async deleteDoc(id) {
+      const d = col.doc(id);
+      for (const sub of ["chunks", "questions"]) { const s = await d.collection(sub).get(); for (const x of s.docs) await d.collection(sub).doc(x.id).delete(); }
+      await d.delete();
+    },
+  };
+}
+// One write at a time per document.
+const writeChains = new Map();
+function serial(key, fn) { const p = (writeChains.get(key) ?? Promise.resolve()).then(fn, fn); writeChains.set(key, p.catch(() => {})); return p; }
+
+/* ================= profile ================= */
+const levelOf = (p) => {
+  if (!p) return "a medical student";
+  const where = p.university ? ` at ${p.university}` : "";
+  const country = p.country ? ` in ${p.country}` : "";
+  if (p.role === "student") return `a year-${p.year || 1} medical student${where}${country}`;
+  if (p.role === "resident") return `a PGY-${p.pgy || 1} ${p.specialty || ""} resident${where}${country}`.replace(/\s+/g, " ");
+  return `a practicing ${p.specialty || "medical"} clinician${country}`;
+};
+const isPro = () => S.profile?.role === "practitioner";
+
+/* ================= routing ================= */
+function go(route) { location.hash = route; }
+function readRoute() {
+  const h = location.hash.slice(1);
+  if (h.startsWith("doc-")) { S.route = "doc"; S.docId = h.slice(4); }
+  else { S.route = SECTIONS.some(([k]) => k === h) ? h : "library"; S.docId = null; }
+}
+window.addEventListener("hashchange", () => { readRoute(); render(); $("#main").scrollTop = 0; window.scrollTo(0, 0); });
+
+function renderNav() {
+  const cur = S.route === "doc" ? "library" : S.route;
+  const link = (k, label, cls) => `<a class="${cls}" href="#${k}" ${k === cur ? 'aria-current="page"' : ""}>${icon(k)}<span>${label}</span></a>`;
+  $("#railnav").innerHTML = SECTIONS.map(([k, l]) => link(k, k === "tutor" && isPro() ? "Ask" : l, "nav")).join("");
+  $("#tabbar").innerHTML = SECTIONS.map(([k, l]) => link(k, k === "tutor" && isPro() ? "Ask" : l, "")).join("");
+  $("#who").innerHTML = S.profile ? `${esc(S.profile.name || "")}<br>${esc(levelOf(S.profile).replace(/^a /, ""))}` : "";
+}
+
+function render() {
+  renderNav();
+  if (!S.profile && S.ready) return renderOnboarding();
+  if (S.route !== "doc" && S.unsubQ) { S.unsubQ(); S.unsubQ = null; S.questionsDoc = null; }
+  ({ library: renderLibrary, doc: renderDoc, tutor: renderTutor, practice: renderPractice, videos: renderVideos, profile: renderProfile })[S.route]();
+}
+
+function notice() {
+  if (!S.ready) return `<div class="banner info">Starting up…</div>`;
+  const parts = [];
+  if (!S.sampleOk) parts.push(`<div class="banner">AI features need Nisome to be open on claude.ai while you're signed in. You can look around, but summaries, questions and answers won't work here.</div>`);
+  if (!S.saved) parts.push(`<div class="banner">Your library is kept for this visit only${S.db ? " because this link is view-only. Ask the owner for Contributor access to save your work" : ""}.</div>`);
+  return parts.join("");
+}
+
+/* ================= onboarding ================= */
+let ob = null;
+function renderOnboarding() {
+  ob = ob || { role: null, name: S.meName || "", university: "", country: "", year: 1, exam: "", specialty: "", pgy: 1, ...(S.profile || {}) };
+  const v = $("#view");
+  const roles = [["student", "Medical student", "Tutoring, exam-style questions and cases matched to your year."], ["resident", "Resident", "Board-level prep and complex cases in your specialty."], ["practitioner", "Practitioner", "Guideline-based clinical reference and self-tests."]];
+  v.innerHTML = `
+    <div class="stack"><span class="eyebrow">Welcome to Nisome</span><h1>Which describes you?</h1>
+    <p class="lede">This sets how deep explanations go and what kind of questions you get. You can change it later in Profile.</p></div>
+    <div class="roles">${roles.map(([r, t, d]) => `<button class="role" data-act="ob-role" data-role="${r}" aria-pressed="${ob.role === r}"><b>${t}</b><span class="muted small">${d}</span></button>`).join("")}</div>
+    ${ob.role ? `<form class="card stack" id="ob-form">
+      <label class="field"><span>Your name</span><input type="text" id="ob-name" value="${esc(ob.name)}" required maxlength="80" autocomplete="name"></label>
+      ${ob.role !== "practitioner" ? `<label class="field"><span>${ob.role === "resident" ? "University or training institution" : "University"}</span>
+        <input type="text" id="ob-uni" value="${esc(ob.university)}" placeholder="Start typing, e.g. Muhimbili or Nairobi" autocomplete="off" required maxlength="160">
+        <div id="ob-sugg"></div><small class="muted">Pick from the list, or keep what you typed if your school isn't listed.</small></label>` : ""}
+      ${ob.role === "student" ? `<div class="grid2">
+        <label class="field"><span>Year of study</span><select id="ob-year">${[1, 2, 3, 4, 5, 6, 7].map((n) => `<option ${+ob.year === n ? "selected" : ""}>${n}</option>`).join("")}</select></label>
+        <label class="field"><span>Exam you're preparing for (optional)</span><select id="ob-exam"><option value="">None</option>${["University exams", "USMLE Step 1", "USMLE Step 2 CK", "PLAB", "NEET-PG", "AMC", "MCCQE"].map((x) => `<option ${ob.exam === x ? "selected" : ""}>${x}</option>`).join("")}</select></label></div>` : ""}
+      ${ob.role !== "student" ? `<label class="field"><span>Specialty</span><input type="text" id="ob-spec" list="specs" value="${esc(ob.specialty)}" placeholder="e.g. Internal Medicine" required maxlength="80"><datalist id="specs">${CAT.s.map((x) => `<option value="${esc(x)}">`).join("")}</datalist></label>` : ""}
+      ${ob.role === "resident" ? `<label class="field"><span>Postgraduate year</span><select id="ob-pgy">${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `<option value="${n}" ${+ob.pgy === n ? "selected" : ""}>PGY-${n}</option>`).join("")}</select></label>` : ""}
+      <label class="field"><span>Country</span><input type="text" id="ob-country" value="${esc(ob.country)}" placeholder="e.g. Tanzania" maxlength="80" autocomplete="country-name"></label>
+      <p class="err small" id="ob-err" hidden></p>
+      <div class="row"><button class="btn" type="submit">${S.profile ? "Save changes" : "Start studying"}</button>${S.profile ? `<button class="btn quiet" type="button" data-act="ob-cancel">Cancel</button>` : ""}</div>
+    </form>` : ""}`;
+  const uni = $("#ob-uni");
+  if (uni) uni.addEventListener("input", () => showUniSuggestions(uni.value));
+}
+function showUniSuggestions(q) {
+  const box = $("#ob-sugg"); if (!box) return;
+  const words = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length || q.trim().length < 2) { box.innerHTML = ""; return; }
+  const hits = CAT.u.filter(([n, c]) => words.every((w) => (n + " " + c).toLowerCase().includes(w))).slice(0, 7);
+  box.innerHTML = hits.length ? `<div class="sugg">${hits.map(([n, c]) => `<button type="button" data-act="ob-uni" data-name="${esc(n)}" data-country="${esc(c)}">${esc(n)}<br><small>${esc(c)}</small></button>`).join("")}</div>` : "";
+}
+async function saveOnboarding() {
+  const val = (id) => $(id)?.value.trim() ?? "";
+  const p = { role: ob.role, name: val("#ob-name"), country: val("#ob-country"), updatedAt: Date.now() };
+  if (ob.role !== "practitioner") p.university = val("#ob-uni");
+  if (ob.role === "student") { p.year = +val("#ob-year") || 1; p.exam = val("#ob-exam"); }
+  if (ob.role !== "student") p.specialty = val("#ob-spec");
+  if (ob.role === "resident") p.pgy = +val("#ob-pgy") || 1;
+  const e = $("#ob-err");
+  const fail = (m) => { e.textContent = m; e.hidden = false; };
+  if (!p.name) return fail("Add your name.");
+  if (ob.role !== "practitioner" && p.university.length < 2) return fail("Add your university to continue.");
+  if (ob.role !== "student" && p.specialty.length < 2) return fail("Add your specialty to continue.");
+  try { await S.store.setProfile(p); } catch (err) {
+    // A view-only link can't save: keep going for this visit.
+    if (S.store.kind === "db") { S.store = memoryStore(); S.saved = false; await S.store.setProfile(p); startDocsWatch(); }
+    else return fail(errText(err));
+  }
+  S.profile = p; ob = null;
+  if (S.route === "profile") render(); else go("library");
+  render();
+}
+
+/* ================= library ================= */
+function renderLibrary() {
+  const v = $("#view");
+  const docs = S.docs;
+  v.innerHTML = `${notice()}
+    <div class="stack"><span class="eyebrow">Library</span><h1>Study your own material</h1>
+    <p class="lede">Upload a lecture PDF, a paper, a textbook, a Word file or a photo of your notes. Nisome summarizes it, quizzes you on it, corrects your answers, and brings back what you miss.</p></div>
+    <div class="drop" id="drop">
+      <b>Drop a file here</b>
+      <span class="muted small">PDF, Word (.docx), text, or a photo (JPG, PNG, WebP) · up to ${MAX_FILE_MB} MB</span>
+      <button class="btn" data-act="pick">Choose a file</button>
+    </div>
+    <div class="docs" id="docs">${docs.length ? docs.map(docRow).join("") : S.docsLoaded ? `<p class="muted">Your uploads will appear here. Start with one lecture: it takes about a minute.</p>` : `<p class="muted">Loading your library…</p>`}</div>`;
+  const drop = $("#drop");
+  drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); const f = e.dataTransfer?.files?.[0]; if (f) handleFile(f); });
+}
+function docStatus(d) {
+  const p = S.processing[d.id];
+  if (p) return `<span>${esc(p.label)}</span><div class="bar" style="margin-top:6px"><i style="width:${Math.round(p.frac * 100)}%"></i></div>`;
+  if (d.status === "error") return `<span class="status-error">${esc(d.error || "Couldn't process this file.")}</span>`;
+  if (d.status !== "ready") return `<span class="muted">Processing stopped when the page closed. Delete it and upload again.</span>`;
+  const m = masteryPct(d.mastery);
+  return `<span class="muted">${[d.pages ? d.pages + " pages" : null, d.parts > 1 ? d.parts + " parts" : null, m !== null ? m + "% correct so far" : "Ready to study"].filter(Boolean).join(" · ")}</span>`;
+}
+function docRow(d) {
+  const kind = d.kind === "pdf" ? "PDF" : d.kind === "image" ? "IMG" : d.kind === "docx" ? "DOC" : "TXT";
+  return `<button class="doc" data-act="open-doc" data-id="${esc(d.id)}"><span class="ic">${kind}</span><span class="t"><b>${esc(d.summary?.title || d.title)}</b>${docStatus(d)}</span></button>`;
+}
+function masteryPct(m) { if (!m) return null; let r = 0, t = 0; for (const v of Object.values(m)) { r += v.right; t += v.right + v.wrong; } return t ? Math.round((r / t) * 100) : null; }
+function refreshDocRows() { const box = $("#docs"); if (S.route === "library" && box) box.innerHTML = S.docs.length ? S.docs.map(docRow).join("") : `<p class="muted">Your uploads will appear here.</p>`; }
+
+/* ================= reading files ================= */
+function kindOf(file) {
+  const n = file.name.toLowerCase();
+  if (file.type === "application/pdf" || n.endsWith(".pdf")) return "pdf";
+  if (n.endsWith(".docx")) return "docx";
+  if (/^image\/(jpeg|png|webp|gif)$/.test(file.type)) return "image";
+  if (file.type.startsWith("text/") || /\.(txt|md|markdown)$/.test(n)) return "text";
+  return null;
+}
+function setProgress(id, label, frac) { S.processing[id] = { label, frac }; refreshDocRows(); if (S.route === "doc" && S.docId === id) renderDoc(); }
+
+async function handleFile(file) {
+  if (!S.ready) return alertBox("Nisome is still starting. Try again in a moment.");
+  const kind = kindOf(file);
+  if (kind === "pdf" && (!window.pdfjsLib || !window.pdfjsWorker)) return alertBox("The PDF reader didn't load. Check your connection and reload the page.");
+  if (kind === "docx" && !window.mammoth) return alertBox("The Word reader didn't load. Check your connection and reload the page.");
+  if (!kind) return alertBox("Upload a PDF, a Word document (.docx), a text file, or an image.");
+  if (file.size > MAX_FILE_MB * 1024 * 1024) return alertBox(`Files can be up to ${MAX_FILE_MB} MB in the browser. Split large books into volumes.`);
+  if (!S.sampleOk) return alertBox("AI features need Nisome to be open on claude.ai while signed in.");
+  const id = uid8();
+  const title = file.name.replace(/\.[^.]+$/, "").slice(0, 160);
+  await S.store.setDoc(id, { title, fileName: file.name, kind, sizeBytes: file.size, status: "processing", createdAt: Date.now() }).catch((e) => alertBox(errText(e)));
+  S.processing[id] = { label: "Opening the file…", frac: 0.02 };
+  go("doc-" + id);
+  try {
+    await processFile(id, file, kind, title);
+  } catch (e) {
+    console.error(e);
+    await S.store.updateDoc(id, { status: "error", error: errText(e) }).catch(() => {});
+  } finally {
+    delete S.processing[id];
+    refreshDocRows();
+    if (S.route === "doc" && S.docId === id) renderDoc();
+  }
+}
+
+/** Groups page-tagged text into parts that fit comfortably in one request. */
+function packPages(pages) {
+  const parts = []; let cur = [], size = 0, first = null;
+  for (const p of pages) {
+    const block = `[p. ${p.n}]\n${p.text.trim()}\n`;
+    const b = bytes(block);
+    if (cur.length && size + b > CHUNK_BYTES) { parts.push({ label: first === cur.at(-1).n ? `p. ${first}` : `pp. ${first}-${cur.at(-1).n}`, text: cur.map((x) => x.block).join("\n") }); cur = []; size = 0; }
+    if (!cur.length) first = p.n;
+    cur.push({ n: p.n, block: b > CHUNK_BYTES ? block.slice(0, CHUNK_BYTES / 2) : block }); size += Math.min(b, CHUNK_BYTES);
+  }
+  if (cur.length) parts.push({ label: first === cur.at(-1).n ? `p. ${first}` : `pp. ${first}-${cur.at(-1).n}`, text: cur.map((x) => x.block).join("\n") });
+  return parts;
+}
+function packText(text) {
+  const parts = []; let rest = text.trim(); const max = CHUNK_BYTES / 1.1;
+  while (bytes(rest) > CHUNK_BYTES) {
+    let cut = rest.lastIndexOf("\n\n", max); if (cut < max * 0.5) cut = rest.lastIndexOf("\n", max); if (cut < max * 0.5) cut = max;
+    parts.push(rest.slice(0, cut)); rest = rest.slice(cut).trim();
+  }
+  if (rest) parts.push(rest);
+  return parts.map((t, i, a) => ({ label: a.length === 1 ? "full text" : `part ${i + 1} of ${a.length}`, text: t }));
+}
+
+async function imageBlob(source, maxSide = 2000) {
+  const bmp = await createImageBitmap(source);
+  const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise((r) => c.toBlob(r, "image/jpeg", 0.85));
+}
+
+async function processFile(id, file, kind, title) {
+  let parts = [], pages = 0, outline = "";
+  const imgCaps = S.limits?.images;
+
+  if (kind === "image") {
+    if (!imgCaps) throw { code: "images_unavailable" };
+    setProgress(id, "Reading your photo…", 0.3);
+    const blob = await imageBlob(file);
+    const r = await askJSON(summaryInstructions(title, "a photo of study material") + `\nAlso add "transcript": every word of text visible in the image, in reading order, with headings on their own lines. Describe diagrams briefly in [brackets].`, { images: [blob] });
+    validateSummary(r);
+    parts = [{ label: "photo", text: String(r.transcript || "").slice(0, CHUNK_BYTES) }];
+    await saveParts(id, parts);
+    await S.store.updateDoc(id, { summary: cleanSummary(r), parts: 1, partLabels: ["photo"], topics: r.topics || [] });
+  } else {
+    if (kind === "pdf") {
+      const data = new Uint8Array(await file.arrayBuffer());
+      const pdf = await pdfjsLib.getDocument({ data, isEvalSupported: false }).promise;
+      pages = pdf.numPages;
+      try { const ol = await pdf.getOutline(); if (ol?.length) outline = ol.slice(0, 80).map((o) => "- " + o.title).join("\n"); } catch {}
+      const pageTexts = [];
+      for (let n = 1; n <= pages; n++) {
+        const page = await pdf.getPage(n);
+        const tc = await page.getTextContent();
+        let t = ""; for (const it of tc.items) { t += it.str + (it.hasEOL ? "\n" : " "); }
+        pageTexts.push({ n, text: t.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n") });
+        if (n % 10 === 0 || n === pages) setProgress(id, `Reading page ${n} of ${pages}…`, 0.05 + 0.45 * (n / pages));
+      }
+      // Scanned pages have no text layer: let Claude read the page images.
+      const scanned = pageTexts.filter((p) => p.text.trim().length < 40);
+      if (scanned.length > pages * 0.3) {
+        if (!imgCaps) throw { message: "This PDF is scanned (no text layer), and images can't be sent from this view. Try a PDF with selectable text." };
+        const todo = scanned.slice(0, MAX_OCR_PAGES);
+        const per = Math.max(1, Math.min(4, imgCaps.maxCount || 1));
+        for (let i = 0; i < todo.length; i += per) {
+          setProgress(id, `Reading scanned pages ${todo[i].n}-${todo[Math.min(i + per, todo.length) - 1].n}…`, 0.5 + 0.25 * (i / todo.length));
+          const batch = todo.slice(i, i + per);
+          const imgs = [];
+          for (const p of batch) {
+            const page = await pdf.getPage(p.n);
+            const vp = page.getViewport({ scale: 1.7 });
+            const c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
+            await page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise;
+            imgs.push(await new Promise((r) => c.toBlob(r, "image/jpeg", 0.82)));
+          }
+          const out = await askJSON(`These are scanned pages ${batch.map((p) => p.n).join(", ")} of a medical document, in order. Transcribe all text on each page in reading order. Describe figures briefly in [brackets].
+Reply with only JSON: [{"page": <page number>, "text": "<transcript>"}].`, { images: imgs });
+          for (const o of Array.isArray(out) ? out : []) { const pt = pageTexts.find((p) => p.n === +o.page); if (pt && o.text) pt.text = String(o.text); }
+        }
+        if (scanned.length > MAX_OCR_PAGES) alertBox(`This scan has ${scanned.length} pages without text. Nisome read the first ${MAX_OCR_PAGES}; for the rest, upload a PDF with selectable text or split the scan.`);
+      }
+      parts = packPages(pageTexts.filter((p) => p.text.trim()));
+    } else {
+      setProgress(id, "Reading the text…", 0.2);
+      const text = kind === "docx" ? (await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value : await file.text();
+      parts = packText(text);
+    }
+    if (!parts.length || !parts.some((p) => p.text.trim())) throw { message: "This file has no readable text." };
+    setProgress(id, "Saving…", 0.78);
+    await saveParts(id, parts);
+    setProgress(id, "Writing your summary…", 0.82);
+    const r = await askJSON(summaryInstructions(title, pages ? `a ${pages}-page document` : "a document") + "\n\n" + materialForSummary(parts, outline));
+    validateSummary(r);
+    await S.store.updateDoc(id, { summary: cleanSummary(r), pages, parts: parts.length, partLabels: parts.map((p) => p.label), topics: r.topics || [] });
+  }
+  setProgress(id, "Writing your first questions…", 0.93);
+  S.chunkCache[id] = parts.map((p, i) => ({ i, ...p }));
+  const d = S.docs.find((x) => x.id === id) || { id, title };
+  await makeQuestions({ ...d, parts: parts.length, partLabels: parts.map((p) => p.label) }, 5, false).catch((e) => console.warn("starter questions", e));
+  await S.store.updateDoc(id, { status: "ready", readyAt: Date.now() });
+}
+async function saveParts(id, parts) {
+  for (let i = 0; i < parts.length; i++) await S.store.setChunk(id, i, { i, label: parts[i].label, text: parts[i].text });
+  S.chunkCache[id] = parts.map((p, i) => ({ i, ...p }));
+}
+function materialForSummary(parts, outline) {
+  const all = parts.map((p) => p.text).join("\n\n");
+  if (bytes(all) < PROMPT_BUDGET - 12000) return `<material>\n${all}\n</material>`;
+  // Long work: table of contents plus an even slice of every part.
+  const room = PROMPT_BUDGET - 16000 - bytes(outline);
+  const each = Math.floor(room / parts.length / 1.1);
+  return `This is a long work. Below are ${outline ? "its table of contents and " : ""}excerpts from the start of every part; page markers look like [p. 12].
+${outline ? `<contents>\n${outline}\n</contents>\n` : ""}<excerpts>\n${parts.map((p) => `## ${p.label}\n${p.text.slice(0, each)}`).join("\n\n")}\n</excerpts>`;
+}
+function summaryInstructions(title, what) {
+  return `You are Nisome, a study companion for ${levelOf(S.profile)}. Summarize ${what} titled "${title}" for studying. Be accurate and specific, using the material's own terms, numbers and page references (page markers look like [p. 12]).
+Reply with only JSON in this shape:
+{"title": "a clear title for the material", "overview": "Markdown, 150-300 words", "keyPoints": ["5-10 key points"], "sections": [{"heading": "", "summary": "2-3 sentences", "pages": "e.g. pp. 10-24, or empty"}], "glossary": [{"term": "", "definition": ""}], "topics": ["4-10 short concept names usable as quiz categories"], "videoQueries": ["3-5 short YouTube search phrases for tutorial videos on the main topics"]}`;
+}
+function validateSummary(r) { if (!r || typeof r !== "object" || !r.overview) throw { code: "invalid_json" }; }
+function cleanSummary(r) {
+  const arr = (x) => (Array.isArray(x) ? x : []);
+  return {
+    title: String(r.title || "").slice(0, 200), overview: String(r.overview || ""),
+    keyPoints: arr(r.keyPoints).map(String).slice(0, 15),
+    sections: arr(r.sections).slice(0, 40).map((s) => ({ heading: String(s.heading || ""), summary: String(s.summary || ""), pages: String(s.pages || "") })),
+    glossary: arr(r.glossary).slice(0, 25).map((g) => ({ term: String(g.term || ""), definition: String(g.definition || "") })),
+    videoQueries: arr(r.videoQueries).map(String).slice(0, 6),
+  };
+}
+
+/* ================= finding the right part ================= */
+const STOP = new Set("the and for with that this from are was were what which when where how why does into than then them they their there these those your you about have has had not but can will would should could also its it's into over under between within more most less such each other only very".split(" "));
+const terms = (s) => (s.toLowerCase().match(/[a-z0-9À-ɏ]{3,}/g) || []).filter((w) => !STOP.has(w));
+async function partsFor(d) {
+  if (!S.chunkCache[d.id]) S.chunkCache[d.id] = (await S.store.getChunks(d.id)).map((c) => ({ i: c.i, label: c.label, text: c.text }));
+  return S.chunkCache[d.id];
+}
+/** Picks the parts most relevant to `query` that fit within `budget` bytes. */
+async function pickParts(d, query, budget, max = 2) {
+  const parts = await partsFor(d);
+  if (parts.length <= 1) return parts;
+  const q = [...new Set(terms(query))];
+  if (!q.length) return parts.slice(0, 1);
+  const df = {}; const tfs = parts.map((p) => { const tf = {}; for (const w of terms(p.text)) tf[w] = (tf[w] || 0) + 1; for (const w of q) if (tf[w]) df[w] = (df[w] || 0) + 1; return tf; });
+  const scored = parts.map((p, i) => ({ p, s: q.reduce((acc, w) => acc + (tfs[i][w] ? (1 + Math.log(tfs[i][w])) * Math.log(1 + parts.length / (df[w] || 1)) : 0), 0) })).sort((a, b) => b.s - a.s);
+  const out = []; let used = 0;
+  for (const { p, s } of scored) { if (out.length >= max || (out.length && s <= 0)) break; const b = bytes(p.text); if (used + b > budget) continue; out.push(p); used += b; }
+  return out.length ? out.sort((a, b) => a.i - b.i) : [parts[0]];
+}
+
+/* ================= questions from the material ================= */
+async function makeQuestions(d, count, weakOnly) {
+  const parts = await partsFor(d);
+  const mastery = d.mastery || {};
+  const weak = Object.entries(mastery).filter(([, m]) => m.wrong > 0 && m.wrong >= m.right).sort((a, b) => (b[1].wrong - b[1].right) - (a[1].wrong - a[1].right)).map(([c]) => c).slice(0, 5);
+  let chosen;
+  if (weakOnly && weak.length) chosen = await pickParts(d, weak.join(" "), PROMPT_BUDGET - 20000, 2);
+  else { const cur = d.qCursor || 0; chosen = [parts[cur % parts.length]]; }
+  const prev = (S.questionsDoc === d.id ? S.questions : []).slice(0, 20).map((q) => "- " + q.question.slice(0, 140)).join("\n");
+  const topics = (d.topics || []).slice(0, 30).join("; ");
+  const prompt = `You are Nisome, writing study questions for ${levelOf(S.profile)}. Base every question strictly on the material below ("${d.summary?.title || d.title}", ${chosen.map((p) => p.label).join(" and ")}).
+Write ${count} questions: about 70% multiple choice and 30% short answer. Test understanding and application, not trivia; use clinical vignettes where the material allows.
+Multiple choice: "type": "mcq", exactly 5 "choices", "answerIndex" 0-4 for the single best answer.
+Short answer: "type": "short", "choices": [], "answerIndex": -1, answerable in 1-3 sentences.
+"modelAnswer": the ideal answer. "explanation": why it is right and why tempting wrong options are wrong, 2-4 sentences. "source": where the answer is, like "p. 42" (page markers look like [p. 42]) or a section heading. "concept": one short concept name${topics ? `, reusing one of these when it fits: ${topics}` : ""}.
+${weakOnly && weak.length ? `The learner keeps getting these wrong; target them from new angles: ${weak.join("; ")}.` : ""}
+${prev ? `Don't repeat these earlier questions:\n${prev}` : ""}
+Reply with only JSON: {"questions": [{"type": "", "question": "", "choices": [], "answerIndex": 0, "modelAnswer": "", "explanation": "", "source": "", "concept": ""}]}
+
+<material>
+${chosen.map((p) => p.text).join("\n\n")}
+</material>`;
+  const r = await askJSON(prompt);
+  const list = (Array.isArray(r?.questions) ? r.questions : []).filter((q) => q && q.question && (q.type === "short" || (Array.isArray(q.choices) && q.choices.length === 5 && q.answerIndex >= 0 && q.answerIndex <= 4)));
+  if (!list.length) throw { code: "invalid_json" };
+  const now = Date.now();
+  for (const [k, q] of list.entries()) {
+    await S.store.addQuestion(d.id, {
+      type: q.type === "short" ? "short" : "mcq", question: String(q.question), choices: q.type === "short" ? [] : q.choices.map(String),
+      answerIndex: q.type === "short" ? -1 : +q.answerIndex, modelAnswer: String(q.modelAnswer || ""), explanation: String(q.explanation || ""),
+      source: String(q.source || ""), concept: (String(q.concept || "").trim() || "General").slice(0, 80),
+      box: 0, dueAt: now, attempts: 0, createdAt: now + (list.length - k), // newest first, batch in order
+    });
+  }
+  if (!(weakOnly && weak.length)) await serial(d.id, () => S.store.updateDoc(d.id, { qCursor: (d.qCursor || 0) + 1 }));
+  return list.length;
+}
+
+async function recordAnswer(d, q, answer, verdict, feedback, correction) {
+  const box = verdict === "correct" ? Math.min(q.box + 1, INTERVAL_DAYS.length - 1) : verdict === "partial" ? q.box : 0;
+  const delay = verdict === "incorrect" ? 10 * 60000 : Math.max(1, INTERVAL_DAYS[box]) * DAY;
+  await serial("q" + q.id, () => S.store.updateQuestion(d.id, q.id, { box, dueAt: Date.now() + delay, attempts: (q.attempts || 0) + 1, lastAnswer: answer, lastVerdict: verdict, lastFeedback: feedback, lastCorrection: correction, answeredAt: Date.now() }));
+  const cur = (S.docs.find((x) => x.id === d.id)?.mastery || {})[q.concept] || { right: 0, wrong: 0 };
+  const next = verdict === "correct" ? { right: cur.right + 1, wrong: cur.wrong } : { right: cur.right, wrong: cur.wrong + 1 };
+  await serial(d.id, () => S.store.updateDoc(d.id, { mastery: { [q.concept]: next } }));
+}
+
+/* ================= document view ================= */
+function currentDoc() { return S.docs.find((d) => d.id === S.docId); }
+
+function renderDoc() {
+  const d = currentDoc();
+  const v = $("#view");
+  if (!d) { v.innerHTML = S.docsLoaded ? `<p class="muted">This document isn't in your library. <a href="#library">Back to Library</a></p>` : `<p class="muted">Loading…</p>`; return; }
+  const p = S.processing[d.id];
+  if (p || d.status !== "ready") {
+    v.innerHTML = `<a href="#library" class="small">← Library</a><h1>${esc(d.title)}</h1>
+      <div class="card stack">${p ? `<b>${esc(p.label)}</b><div class="bar"><i style="width:${Math.round(p.frac * 100)}%"></i></div>
+      <p class="muted small">A lecture takes about a minute; a textbook can take several. Keep this tab open until it finishes.</p>`
+      : d.status === "error" ? `<div class="banner bad">${esc(d.error || "Couldn't process this file.")}</div><div class="row"><button class="btn danger" data-act="del-doc" data-id="${esc(d.id)}">Delete</button></div>`
+      : `<p>Processing stopped before it finished, probably because the page was closed.</p><div class="row"><button class="btn danger" data-act="del-doc" data-id="${esc(d.id)}">Delete and upload again</button></div>`}</div>`;
+    return;
+  }
+  if (S.questionsDoc !== d.id) watchQuestions(d.id);
+  const tabs = [["summary", "Summary"], ["quiz", "Quiz"], ["ask", "Ask"], ["videos", "Videos"]];
+  if (!$("#doc-shell") || $("#doc-shell").dataset.id !== d.id) {
+    v.innerHTML = `<div id="doc-shell" data-id="${esc(d.id)}" class="stack" style="gap:16px">
+      <div class="row" style="justify-content:space-between"><a href="#library" class="small">← Library</a><button class="btn quiet small" data-act="del-doc" data-id="${esc(d.id)}">Delete</button></div>
+      <h1 id="doc-title"></h1>
+      <div class="seg" role="tablist" id="doc-tabs">${tabs.map(([k, l]) => `<button role="tab" data-act="doc-tab" data-tab="${k}">${l}</button>`).join("")}</div>
+      <section id="pane-summary"></section><section id="pane-quiz" hidden></section>
+      <section id="pane-ask" hidden></section><section id="pane-videos" hidden></section></div>`;
+    S.pinned = new Set();
+    buildDocChat(d);
+  }
+  $("#doc-title").textContent = d.summary?.title || d.title;
+  for (const b of $("#doc-tabs").children) b.setAttribute("aria-selected", b.dataset.tab === S.docTab);
+  for (const [k] of tabs) $("#pane-" + k).hidden = k !== S.docTab;
+  renderSummaryPane(d);
+  renderQuizPane(d);
+  renderVideosPane(d);
+}
+
+function renderSummaryPane(d) {
+  const s = d.summary || {};
+  const pct = masteryPct(d.mastery);
+  const concepts = Object.entries(d.mastery || {}).sort((a, b) => (b[1].wrong - b[1].right) - (a[1].wrong - a[1].right)).slice(0, 8);
+  $("#pane-summary").innerHTML = `<div class="stack" style="gap:18px">
+    <div class="md">${md(s.overview)}</div>
+    ${pct !== null ? `<div class="card stack"><span class="eyebrow">Your progress</span><b>${pct}% of answers correct</b><div class="bar"><i style="width:${pct}%"></i></div>
+      ${concepts.map(([c, m]) => `<div class="mastery-row"><span>${esc(c)}</span><span style="color:${m.wrong > m.right ? "var(--bad)" : "var(--good)"}">${m.right}/${m.right + m.wrong}</span></div>`).join("")}</div>` : ""}
+    <div class="stack"><span class="eyebrow">Key points</span><ul class="kp">${(s.keyPoints || []).map((k) => `<li>${esc(k)}</li>`).join("")}</ul></div>
+    ${s.sections?.length ? `<div class="stack"><span class="eyebrow">Sections</span>${s.sections.map((x) => `<div class="sec"><b>${esc(x.heading)}</b>${x.pages ? `<span class="pg">${esc(x.pages)}</span>` : ""}<span>${esc(x.summary)}</span></div>`).join("")}</div>` : ""}
+    ${d.parts > 1 ? `<div class="stack"><span class="eyebrow">Parts of this work</span><p class="muted small">Long works are stored in ${d.parts} parts. Ask for a detailed summary of any part.</p>
+      <div class="chips">${(d.partLabels || []).map((l, i) => `<button class="chip" data-act="part-summary" data-i="${i}">${esc(l)}</button>`).join("")}</div><div id="part-out"></div></div>` : ""}
+    ${s.glossary?.length ? `<div class="stack"><span class="eyebrow">Glossary</span><dl class="gl">${s.glossary.map((g) => `<dt>${esc(g.term)}</dt><dd>${esc(g.definition)}</dd>`).join("")}</dl></div>` : ""}
+  </div>`;
+}
+
+function watchQuestions(id) {
+  if (S.unsubQ) S.unsubQ();
+  S.questionsDoc = id; S.questions = [];
+  S.unsubQ = S.store.watchQuestions(id, (list) => { S.questions = list; if (S.route === "doc" && S.docId === id) { const d = currentDoc(); if (d) renderQuizPane(d); } }, () => {});
+}
+
+function renderQuizPane(d) {
+  const pane = $("#pane-quiz"); if (!pane) return;
+  const now = Date.now();
+  const isDue = (q) => (q.dueAt || 0) <= now;
+  const list = S.questions.filter((q) => isDue(q) || S.pinned.has(q.id));
+  list.forEach((q) => S.pinned.add(q.id));
+  const dueCount = S.questions.filter(isDue).length;
+  const hasWeak = Object.values(d.mastery || {}).some((m) => m.wrong > 0 && m.wrong >= m.right);
+  const filter = pane.dataset.filter || "due";
+  const shown = filter === "due" ? list : S.questions;
+  if (!$("#q-list")) {
+    pane.innerHTML = `<div class="stack">
+      <div class="chips" id="q-filters"></div>
+      <div id="q-list" class="stack"></div>
+      <p class="err small" id="q-err" hidden></p>
+      <div class="row"><button class="btn" data-act="more-q" data-focus="next">5 new questions</button><button class="btn ghost" data-act="more-q" data-focus="weak" id="weak-btn">Practice my weak spots</button></div>
+      <p class="muted small">New questions appear here as soon as they're written. Missed questions come back in 10 minutes; correct ones after 1, 3, 7, 16 and 35 days.</p></div>`;
+  }
+  $("#q-filters").innerHTML = `<button class="chip" data-act="q-filter" data-f="due" aria-pressed="${filter === "due"}">To answer (${dueCount})</button><button class="chip" data-act="q-filter" data-f="all" aria-pressed="${filter === "all"}">All (${S.questions.length})</button>`;
+  $("#weak-btn").hidden = !hasWeak;
+  const box = $("#q-list");
+  if (!shown.length) { box.innerHTML = `<div class="card"><b>${S.questions.length ? "All caught up" : "No questions yet"}</b><p class="muted small" style="margin:4px 0 0">${S.questions.length ? "Questions you miss come back here when they're due." : "Generate questions from this material below."}</p></div>`; return; }
+  // Update cards in place so typing and local results survive live updates.
+  const want = shown.map((q) => q.id);
+  [...box.children].forEach((el) => { if (!el.dataset.q || !want.includes(el.dataset.q)) el.remove(); });
+  let prev = null;
+  for (const q of shown) {
+    const key = [q.attempts, q.lastVerdict, q.dueAt].join("|");
+    let el = box.querySelector(`[data-q="${CSS.escape(q.id)}"]`);
+    if (!el) { el = document.createElement("div"); el.dataset.q = q.id; el.className = "q"; }
+    if (el.dataset.key !== key || el.dataset.local !== localKey(q.id)) { el.innerHTML = questionHTML(d, q); el.dataset.key = key; el.dataset.local = localKey(q.id); }
+    if (prev ? prev.nextSibling !== el : box.firstChild !== el) box.insertBefore(el, prev ? prev.nextSibling : box.firstChild);
+    prev = el;
+  }
+}
+const localKey = (qid) => { const s = S.qState[qid]; return s ? [s.picked, !!s.grade, s.busy, s.err].join("|") : ""; };
+
+function questionHTML(d, q) {
+  const st = S.qState[q.id] || {};
+  const due = (q.dueAt || 0) <= Date.now();
+  const shown = st.grade || (!due && q.lastVerdict ? { verdict: q.lastVerdict, feedback: q.lastFeedback, correction: q.lastCorrection } : null);
+  const picked = st.picked ?? (shown && typeof q.lastAnswer === "number" ? q.lastAnswer : null);
+  const verdictText = { correct: "Correct", partial: "Partly right", incorrect: "Not quite" };
+  return `<div class="meta"><span class="concept">${esc(q.concept)}</span>${q.source ? `<span class="muted">· ${esc(q.source)}</span>` : ""}${due && q.attempts ? `<span class="due">· Due for review</span>` : ""}</div>
+    <p class="stem">${esc(q.question)}</p>
+    ${q.type === "mcq" ? `<div class="stack" style="gap:8px">${q.choices.map((c, i) => {
+      const cls = shown ? (i === q.answerIndex ? "right" : i === picked ? "wrong" : "") : "";
+      return `<button class="choice ${cls}" data-act="mcq" data-qid="${esc(q.id)}" data-i="${i}" ${shown ? "disabled" : ""}><span class="k">${LETTERS[i]}</span><span>${esc(c)}</span></button>`; }).join("")}</div>`
+    : !shown ? `<textarea rows="3" data-qtext="${esc(q.id)}" placeholder="Type your answer" aria-label="Your answer">${esc(st.text || "")}</textarea>
+      <div class="row"><button class="btn" data-act="short" data-qid="${esc(q.id)}" ${st.busy ? "disabled" : ""}>${st.busy ? "Checking…" : "Check my answer"}</button></div>`
+    : `<p class="muted small" style="margin:0"><i>Your answer: ${esc(st.text || q.lastAnswer || "")}</i></p>`}
+    ${st.err ? `<p class="err small">${esc(st.err)}</p>` : ""}
+    ${shown ? `<div class="result">
+      <span class="verdict ${shown.verdict}">${verdictText[shown.verdict] || ""}</span>
+      ${shown.correction ? `<div class="correction"><b>Correction:</b> ${esc(shown.correction)}</div>` : ""}
+      ${shown.feedback && shown.feedback !== q.explanation ? `<div>${esc(shown.feedback)}</div>` : ""}
+      <div class="md">${md(q.explanation)}</div>
+      ${q.type === "short" ? `<div class="muted small"><b>Model answer:</b> ${esc(q.modelAnswer)}</div>` : ""}
+      <span class="muted small">${shown.verdict === "incorrect" ? "Nisome will ask this again in about 10 minutes." : shown.verdict === "partial" ? "You'll see this again tomorrow." : "Next review is scheduled further out."}</span>
+      <div class="row"><button class="btn ghost" data-act="discuss" data-qid="${esc(q.id)}">Ask Nisome about this</button></div></div>` : ""}`;
+}
+
+async function answerMcq(qid, i) {
+  const d = currentDoc(); const q = S.questions.find((x) => x.id === qid); if (!d || !q) return;
+  const verdict = i === q.answerIndex ? "correct" : "incorrect";
+  const correction = verdict === "incorrect" ? `The correct answer is ${LETTERS[q.answerIndex]}: ${q.choices[q.answerIndex]}.` : "";
+  S.qState[qid] = { picked: i, grade: { verdict, feedback: q.explanation, correction } };
+  renderQuizPane(d);
+  recordAnswer(d, q, i, verdict, q.explanation, correction).catch((e) => { S.qState[qid].err = "Couldn't save this answer: " + errText(e); renderQuizPane(d); });
+}
+async function answerShort(qid) {
+  const d = currentDoc(); const q = S.questions.find((x) => x.id === qid); if (!d || !q) return;
+  const st = (S.qState[qid] = S.qState[qid] || {});
+  const text = (st.text || "").trim(); if (!text) return;
+  st.busy = true; st.err = null; renderQuizPane(d);
+  try {
+    const g = await askJSON(`Grade ${levelOf(S.profile)}'s answer to a study question. Be fair: accept correct answers in different words; mark "partial" when the core idea is right but something important is missing or slightly wrong.
+"feedback": 1-3 sentences to the learner, starting with what they got right. "correction": if not fully correct, state the correct answer plainly and fix any misconception; otherwise "".
+Reply with only JSON: {"verdict": "correct" | "partial" | "incorrect", "feedback": "", "correction": ""}
+
+Question: ${q.question}
+Model answer: ${q.modelAnswer}
+Explanation: ${q.explanation}
+Learner's answer: ${text}`, { modelTier: "quick" });
+    const verdict = ["correct", "partial", "incorrect"].includes(g?.verdict) ? g.verdict : "incorrect";
+    st.grade = { verdict, feedback: String(g?.feedback || ""), correction: String(g?.correction || "") };
+    st.busy = false; renderQuizPane(d);
+    await recordAnswer(d, q, text, verdict, st.grade.feedback, st.grade.correction);
+  } catch (e) { st.busy = false; st.err = errText(e); renderQuizPane(d); }
+}
+
+function renderVideosPane(d) {
+  const pane = $("#pane-videos"); if (!pane) return;
+  const qs = d.summary?.videoQueries?.length ? d.summary.videoQueries : [d.summary?.title || d.title];
+  pane.innerHTML = `<div class="stack"><p class="muted" style="margin:0">Tutorial videos on the topics in this material. They open on YouTube in a new tab.</p>
+    <div class="vgrid">${qs.map((q) => videoCard(q)).join("")}</div>
+    <span class="eyebrow">Look it up on learning sites</span>${siteList(qs[0])}</div>`;
+}
+
+/* ================= document chat ================= */
+function buildDocChat(d) {
+  const key = "doc:" + d.id;
+  S.chats[key] = S.chats[key] || [];
+  mountChat($("#pane-ask"), {
+    key, placeholder: `Ask about "${d.summary?.title || d.title}"…`,
+    empty: `<div class="stack"><h2>Ask about this material</h2><p class="muted" style="margin:0">Answers come from your file, with page references. Try explaining a concept in your own words: Nisome will tell you if anything is wrong and correct it.</p>
+      <div class="stack" style="gap:8px">${(d.summary?.keyPoints || []).slice(0, 3).map((k) => `<button class="choice" data-act="chat-starter" data-key="${esc(key)}" data-text="${esc("Explain this in more depth: " + k)}"><span>Explain: ${esc(k)}</span></button>`).join("")}</div></div>`,
+    respond: async (turns, onText, signal) => {
+      const doc = currentDoc() || d;
+      const lastUser = turns[turns.length - 1].content;
+      const prevUser = turns.length >= 3 ? turns[turns.length - 3].content : "";
+      const history = trimTurns(turns, 30000);
+      const s = doc.summary || {};
+      const overview = `Overview of the whole work:\n${s.overview || ""}\nSections:\n${(s.sections || []).map((x) => `- ${x.heading} (${x.pages}): ${x.summary}`).join("\n")}`.slice(0, 12000);
+      const used = bytes(overview) + history.reduce((a, t) => a + bytes(t.content), 0) + 4000;
+      const parts = await pickParts(doc, prevUser + " " + lastUser, PROMPT_BUDGET - used, 2);
+      const rules = `You are Nisome, a study companion for ${levelOf(S.profile)}. You are discussing their uploaded material, "${s.title || doc.title}". The excerpts below (${parts.map((p) => p.label).join(", ")}) and the overview are your main source. Page markers look like [p. 12].
+Ground answers in the material and cite where you found things, like (p. 42). If the material doesn't cover something, say so, then answer from general medical knowledge and label that part clearly.
+Whenever the learner answers a question or states something as fact, check it. If it's wrong or partly wrong, say so plainly, give the correct version, and explain why, kindly and without hedging.
+Use Markdown. Keep answers focused, and end with one short follow-up question that checks understanding when it helps.
+
+${overview}
+
+<excerpts>
+${parts.map((p) => p.text).join("\n\n")}
+</excerpts>`;
+      const r = await ask([{ role: "user", content: rules }, ...history], { onText, signal });
+      return { text: r.text, note: parts.length ? "From " + parts.map((p) => p.label).join(", ") : "" };
+    },
+  });
+}
+function trimTurns(turns, maxBytes) {
+  let out = turns.slice(); while (out.length > 1 && out.reduce((a, t) => a + bytes(t.content), 0) > maxBytes) out = out.slice(2);
+  if (out[0]?.role !== "user") out = out.slice(1);
+  return out;
+}
+
+/* ================= chat widget ================= */
+const chatCfg = {};
+function mountChat(container, cfg) {
+  chatCfg[cfg.key] = cfg;
+  S.chats[cfg.key] = S.chats[cfg.key] || [];
+  container.innerHTML = `<div class="chat" data-chat="${esc(cfg.key)}">
+    ${cfg.head || ""}
+    <div class="thread" data-thread></div>
+    <form class="composer" data-act-form="chat" data-key="${esc(cfg.key)}">
+      <textarea rows="1" placeholder="${esc(cfg.placeholder)}" aria-label="Message" data-chat-input></textarea>
+      <button class="btn" type="submit" data-send>${cfg.sendLabel || "Send"}</button>
+    </form>
+    ${cfg.foot || ""}</div>`;
+  paintThread(cfg.key);
+}
+function chatEl(key) { return document.querySelector(`[data-chat="${CSS.escape(key)}"]`); }
+function paintThread(key) {
+  const el = chatEl(key); if (!el) return;
+  const cfg = chatCfg[key]; const turns = S.chats[key];
+  const visible = turns.slice(cfg.hidden || 0);
+  const th = el.querySelector("[data-thread]");
+  th.innerHTML = visible.length ? visible.map((t) => t.role === "user" ? `<div class="msg user"><div class="bubble">${esc(t.content)}</div></div>`
+    : `<div class="msg"><div class="av">N</div><div class="body"><div class="md">${md(t.content)}</div>${t.note ? `<div class="src">${esc(t.note)}</div>` : ""}</div></div>`).join("") : cfg.empty || "";
+}
+const ctl = {};
+async function sendChat(key, text) {
+  const cfg = chatCfg[key]; if (!cfg) return;
+  const v = (text || "").trim(); if (!v) return;
+  if (ctl[key]) return;
+  const turns = S.chats[key];
+  if (turns.length && turns[turns.length - 1].role === "user") turns.pop(); // an earlier failed send
+  turns.push({ role: "user", content: v });
+  paintThread(key);
+  const el = chatEl(key); const th = el.querySelector("[data-thread]");
+  const bot = document.createElement("div"); bot.className = "msg"; bot.innerHTML = `<div class="av">N</div><div class="body"><div class="md"><span class="thinking">Thinking…</span></div></div>`;
+  th.appendChild(bot); bot.scrollIntoView({ block: "nearest" });
+  const box = bot.querySelector(".md");
+  const send = el.querySelector("[data-send]"); send.textContent = "Stop";
+  ctl[key] = new AbortController();
+  try {
+    const r = await cfg.respond(turns.map(({ role, content }) => ({ role, content })), ({ text }) => { box.innerHTML = md(text); }, ctl[key].signal);
+    turns.push({ role: "assistant", content: r.text, note: r.note });
+  } catch (e) {
+    if (e?.text) turns.push({ role: "assistant", content: e.text });
+    paintThread(key);
+    if (e?.code !== "cancelled") chatEl(key)?.querySelector("[data-thread]").insertAdjacentHTML("beforeend", `<p class="err small">${esc(errText(e))}</p>`);
+    return;
+  } finally { delete ctl[key]; const s = chatEl(key)?.querySelector("[data-send]"); if (s) s.textContent = cfg.sendLabel || "Send"; }
+  paintThread(key);
+  chatEl(key)?.querySelector(".msg:last-child")?.scrollIntoView({ block: "nearest" });
+}
+
+/* ================= tutor ================= */
+const SUBJECTS = ["Any", "Anatomy", "Physiology", "Biochemistry", "Pharmacology", "Pathology", "Microbiology", "Immunology", "Cardiology", "Pulmonology", "Nephrology", "Endocrinology", "Neurology", "Gastroenterology", "Hematology/Oncology", "Infectious Diseases", "Pediatrics", "OB/GYN", "Surgery", "Psychiatry", "Emergency", "Tropical Medicine"];
+let tutorSubject = "Any", socratic = false;
+function tutorRules() {
+  const focus = tutorSubject !== "Any" ? `Focus: ${tutorSubject}.` : "";
+  if (isPro()) return `You are Nisome, a clinical reference assistant for ${levelOf(S.profile)}. ${focus}
+Lead with the bottom line, then supporting detail. Base answers on current major guidelines and good evidence, naming the guideline body and year when you rely on one. Never invent citations; say so when evidence is mixed.
+For doses give typical adult dosing with key adjustments and tell them to confirm against the local formulary. Remind them not to share identifying patient details if they do.
+Use Markdown with short sections, bullets and tables for comparisons.`;
+  return `You are Nisome, a rigorous, encouraging medical educator tutoring ${levelOf(S.profile)}. ${focus}
+Teach from mechanism to clinical relevance, consistent with standard references and current guidelines. If the learner states something wrong, correct it plainly and explain why.
+Use Markdown: short paragraphs, bold key terms, bullets, a table when comparing. Give lab values with units. Keep answers under about 350 words unless asked for depth.
+${socratic ? "SOCRATIC MODE: don't give the answer outright. Ask one guiding question at a time and build on the reply. Give the full explanation only if asked or still stuck after three tries." : "End with a **High-yield** list of 2-4 bullets, then one short check-your-understanding question."}
+If they ask about a real patient or their own health, remind them you are a study tool and a supervising clinician must decide.`;
+}
+function renderTutor() {
+  const v = $("#view");
+  const starters = isPro() ? ["First-line treatment of uncomplicated malaria in adults", "Antihypertensive choice in pregnancy", "When to start anticoagulation after a stroke with AF"]
+    : S.profile?.role === "resident" ? ["Approach to hyponatremia on the ward", "Sepsis: fluids and vasopressors today", "Drug interactions boards love"]
+    : ["Why does furosemide cause hypokalemia?", "Nephritic vs nephrotic syndrome in a table", "Walk me through reading an ABG"];
+  v.innerHTML = `${notice()}<div class="stack"><span class="eyebrow">${isPro() ? "Ask" : "Tutor"}</span><h1>${isPro() ? "Clinical reference" : `What are we studying${S.profile?.name ? ", " + esc(S.profile.name.split(" ")[0]) : ""}?`}</h1></div>
+    <div class="chips scroll">${SUBJECTS.map((s) => `<button class="chip" data-act="tutor-subj" data-s="${esc(s)}" aria-pressed="${s === tutorSubject}">${esc(s)}</button>`).join("")}</div>
+    ${isPro() ? `<div class="banner">Don't enter patient names or other identifying details. Answers support your judgment and need checking against local guidelines.</div>` : `<label class="row small"><input type="checkbox" id="socratic" ${socratic ? "checked" : ""}> Socratic mode: guide me with questions instead of answers</label>`}
+    <div id="tutor-chat"></div>`;
+  mountChat($("#tutor-chat"), {
+    key: "tutor", placeholder: isPro() ? "Ask a clinical question…" : "Ask about a mechanism, drug or concept…",
+    empty: `<div class="stack" style="gap:8px">${starters.map((s) => `<button class="choice" data-act="chat-starter" data-key="tutor" data-text="${esc(s)}"><span>${esc(s)}</span></button>`).join("")}</div>`,
+    foot: `<button class="btn quiet small" data-act="chat-reset" data-key="tutor" style="align-self:flex-start;margin-top:6px">New conversation</button>`,
+    respond: async (turns, onText, signal) => ({ text: (await ask([{ role: "user", content: tutorRules() }, ...trimTurns(turns, 120000)], { onText, signal })).text }),
+  });
+}
+
+/* ================= practice ================= */
+const EXAMPLE_Q = { example: true, topic: "Hyponatremia in a smoker", stem: "A 62-year-old man has 3 days of worsening confusion. He has a 45 pack-year smoking history and 2 months of cough and 6-kg weight loss. BP 132/78 mm Hg, HR 84/min, moist mucous membranes, no edema. Na⁺ 124 mEq/L, K⁺ 4.1 mEq/L, serum osmolality 258 mOsm/kg, urine osmolality 480 mOsm/kg, urine Na⁺ 52 mEq/L, TSH 2.1 µU/mL, morning cortisol 18 µg/dL.", question: "Which is the most likely underlying cause?", choices: ["Small cell carcinoma of the lung", "Squamous cell carcinoma of the lung", "Primary polydipsia", "Primary adrenal insufficiency", "Hypothyroidism"], answer: 0, explanation: "Euvolemic hypotonic hyponatremia with concentrated urine and high urine Na⁺ is **SIADH**; in a heavy smoker with cough and weight loss the classic cause is ectopic ADH from **small cell lung carcinoma**.", whyNot: ["Correct: SCLC secretes ADH ectopically.", "Squamous cell carcinoma classically secretes PTHrP (hypercalcemia).", "Primary polydipsia gives dilute urine (< 100 mOsm/kg).", "Adrenal insufficiency brings hyperkalemia and hypotension; cortisol is normal.", "TSH is normal."], pearl: "SCLC: ADH, ACTH, Lambert–Eaton. Squamous: PTHrP." };
+function renderPractice() {
+  const P = S.practice;
+  const v = $("#view");
+  v.innerHTML = `${notice()}<div class="stack"><span class="eyebrow">Practice</span><h1>${P.mode === "cases" ? "Simulated patients" : isPro() ? "Self-test" : "Question bank"}</h1></div>
+    <div class="seg" role="tablist"><button role="tab" data-act="prac-mode" data-m="questions" aria-selected="${P.mode === "questions"}">${isPro() ? "Self-test" : "Questions"}</button><button role="tab" data-act="prac-mode" data-m="cases" aria-selected="${P.mode === "cases"}">Cases</button></div>
+    <div class="chips scroll">${SUBJECTS.map((s) => `<button class="chip" data-act="prac-subj" data-s="${esc(s)}" aria-pressed="${s === P.subject}">${esc(s)}</button>`).join("")}</div>
+    <div id="prac-body"></div>`;
+  if (P.mode === "questions") renderBank(); else renderCases();
+}
+function renderBank() {
+  const P = S.practice; const q = P.q || EXAMPLE_Q; const done = P.picked !== null;
+  const { right, total } = P.score;
+  $("#prac-body").innerHTML = `<div class="stack">
+    <div class="row" style="justify-content:space-between"><span class="small muted" style="font-variant-numeric:tabular-nums">Score <b style="color:var(--ink)">${right}/${total}</b>${total ? ` · ${Math.round((right / total) * 100)}%` : ""}</span><button class="btn quiet small" data-act="bank-reset">Reset score</button></div>
+    <p class="err small" id="bank-err" hidden></p>
+    <article class="q">${q.example ? `<span class="eyebrow">Example question</span>` : ""}<h2>${esc(q.topic)}</h2><p style="margin:0">${esc(q.stem)}</p><p class="stem">${esc(q.question)}</p>
+      <div class="stack" style="gap:8px">${q.choices.map((c, i) => `<button class="choice ${done ? (i === q.answer ? "right" : i === P.picked ? "wrong" : "") : ""}" data-act="bank-pick" data-i="${i}" ${done ? "disabled" : ""}><span class="k">${LETTERS[i]}</span><span>${esc(c)}${done && q.whyNot?.[i] ? `<br><small class="muted">${esc(q.whyNot[i])}</small>` : ""}</span></button>`).join("")}</div>
+      ${done ? `<div class="result"><span class="verdict ${P.picked === q.answer ? "correct" : "incorrect"}">${P.picked === q.answer ? "Correct." : `Not quite. The answer is ${LETTERS[q.answer]}.`}</span><div class="md">${md(q.explanation)}</div>${q.pearl ? `<div class="pearl"><b>Pearl:</b> ${esc(q.pearl)}</div>` : ""}</div>` : ""}
+    </article>
+    <div class="row"><button class="btn" data-act="bank-new" id="bank-new">${q.example ? "Get a question" : "Next question"}</button></div></div>`;
+}
+async function newBankQuestion() {
+  const P = S.practice; const btn = $("#bank-new"); btn.disabled = true; btn.textContent = "Writing a question…";
+  const style = S.profile?.exam ? `${S.profile.exam}-style` : S.profile?.role === "resident" ? `${S.profile.specialty} board-exam-style` : isPro() ? "CME self-assessment-style" : "medical licensing exam-style";
+  const subject = P.subject !== "Any" ? P.subject : S.profile?.role === "student" || !S.profile?.specialty ? "any area of medicine" : S.profile.specialty;
+  try {
+    const q = await askJSON(`Write one original ${style} single-best-answer question on ${subject} for ${levelOf(S.profile)}. ${P.recent.length ? "Avoid these recent topics: " + P.recent.slice(-10).join("; ") + "." : ""}
+Clinical vignette with age, sex, presentation, vitals and labs with units, then a lead-in. Exactly five choices, one clearly best. Ensure medical accuracy.
+Reply with only JSON: {"topic": "3-6 words", "stem": "", "question": "", "choices": ["","","","",""], "answer": 0, "explanation": "2-4 sentences, Markdown allowed", "whyNot": ["one sentence per choice"], "pearl": "one high-yield sentence"}`);
+    if (!q || !Array.isArray(q.choices) || q.choices.length !== 5 || !(q.answer >= 0 && q.answer <= 4)) throw { code: "invalid_json" };
+    P.q = q; P.picked = null; P.recent.push(q.topic); renderBank();
+  } catch (e) { renderBank(); const er = $("#bank-err"); er.textContent = errText(e); er.hidden = false; }
+}
+function caseRules() {
+  const spec = S.practice.subject !== "Any" ? S.practice.subject : S.profile?.role === "student" || !S.profile?.specialty ? "a common, high-yield presentation from any specialty" : S.profile.specialty;
+  return `Run an interactive clinical case simulation for ${levelOf(S.profile)}. Specialty: ${spec}.
+You play the patient (answer history questions in quotes, in plain words) and the bedside nurse. Open with: setting; first name, age, sex and chief complaint in one line; vitals on one line (HR, BP, RR, Temp °C, SpO2). Then stop and wait.
+Answer only what the learner asks. Give exam findings only for exams they perform and results only for tests they order, with realistic values and units. Never name or hint at the diagnosis. Keep replies brief.
+When the learner writes "DIAGNOSIS:" followed by an answer, step out of role as the attending and give Markdown feedback: the actual diagnosis and whether they got it, the key findings, what they missed or over-ordered, a ranked differential of 3-4, next steps in management, and a 1-10 score with one sentence of advice.`;
+}
+function renderCases() {
+  const started = (S.chats.case || []).length > 0;
+  $("#prac-body").innerHTML = `<div id="case-chat"></div>`;
+  mountChat($("#case-chat"), {
+    key: "case", hidden: 1, placeholder: "Take a history, examine, or order tests…",
+    empty: `<div class="card stack"><span class="eyebrow">Example opening</span><div><b>Emergency department, 02:10.</b> Daniel, 58 M, "crushing" chest pain for 40 minutes.</div><div style="font-family:var(--f-mono);font-size:13px" class="muted">HR 104 · BP 148/92 · RR 22 · T 36.9 °C · SpO₂ 94%</div><p class="muted small" style="margin:0">Start a case, take a history, examine and order tests, then submit your diagnosis for feedback and a score.</p></div>`,
+    foot: `<div class="row" style="margin-top:8px"><button class="btn" data-act="case-start">${started ? "New case" : "Start a case"}</button><button class="btn ghost" data-act="case-dx">Submit diagnosis</button></div>`,
+    respond: async (turns, onText, signal) => ({ text: (await ask([{ role: "user", content: caseRules() }, ...trimTurns(turns, 120000)], { onText, signal })).text }),
+  });
+}
+
+/* ================= videos ================= */
+const SITES = [
+  ["Khan Academy", "Free courses in health and medicine", (q) => `https://www.khanacademy.org/search?page_search_query=${encodeURIComponent(q)}`],
+  ["Radiopaedia", "Radiology cases and reference articles", (q) => `https://radiopaedia.org/search?q=${encodeURIComponent(q)}`],
+  ["Geeky Medics", "OSCE guides and clinical skills", (q) => `https://geekymedics.com/?s=${encodeURIComponent(q)}`],
+  ["TeachMeAnatomy", "Illustrated anatomy guides", (q) => `https://teachmeanatomy.info/?s=${encodeURIComponent(q)}`],
+  ["StatPearls", "Peer-reviewed review articles (NCBI Bookshelf)", (q) => `https://www.ncbi.nlm.nih.gov/books/?term=${encodeURIComponent(q + " StatPearls")}`],
+  ["PubMed", "The biomedical research literature", (q) => `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(q)}`],
+  ["MedlinePlus", "Plain-language health and drug information", () => "https://medlineplus.gov/"],
+  ["WHO guidelines", "World Health Organization guidance", () => "https://www.who.int/publications/who-guidelines"],
+];
+const CHANNELS = ["Osmosis", "Ninja Nerd", "Armando Hasudungan", "Khan Academy Medicine", "MedCram", "Geeky Medics", "Zero to Finals", "Strong Medicine"];
+const yt = (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q + " medical lecture")}`;
+const videoCard = (q) => `<a class="vcard" href="${esc(yt(q))}" target="_blank" rel="noopener"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 5l12 7-12 7z"/></svg></span><span><b>${esc(q)}</b><small>Search YouTube ↗</small></span></a>`;
+const siteList = (q) => `<div class="vgrid">${SITES.map(([n, a, f]) => `<a class="vcard" href="${esc(f(q))}" target="_blank" rel="noopener"><span><b>${esc(n)}</b><small>${esc(a)} ↗</small></span></a>`).join("")}</div>`;
+let videoQuery = "";
+function renderVideos() {
+  const fromLib = S.docs.flatMap((d) => d.summary?.videoQueries?.slice(0, 2) || []).slice(0, 6);
+  const sugg = [...new Set([...fromLib, "Cardiac cycle", "Acid-base interpretation", "Brachial plexus", "Antibiotic classes", "ECG basics"])].slice(0, 9);
+  const q = videoQuery || sugg[0];
+  $("#view").innerHTML = `<div class="stack"><span class="eyebrow">Videos</span><h1>Tutorial videos and learning sites</h1>
+    <p class="lede">Search a topic to find lectures from medical educators. Videos and sites open in a new tab.</p></div>
+    <form class="row" data-act-form="video"><input type="search" id="vq" value="${esc(videoQuery)}" placeholder="e.g. nephron physiology" aria-label="Video topic" style="flex:1;min-width:0"><button class="btn" type="submit">Search</button></form>
+    <div class="stack"><span class="eyebrow">${fromLib.length ? "From your library" : "Popular topics"}</span><div class="chips">${sugg.map((s) => `<button class="chip" data-act="vq" data-q="${esc(s)}" aria-pressed="${s === q}">${esc(s)}</button>`).join("")}</div></div>
+    <div class="stack"><span class="eyebrow">Videos on "${esc(q)}"</span><div class="vgrid">${videoCard(q)}${CHANNELS.slice(0, 5).map((c) => `<a class="vcard" href="${esc(`https://www.youtube.com/results?search_query=${encodeURIComponent(c + " " + q)}`)}" target="_blank" rel="noopener"><span class="play"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 5l12 7-12 7z"/></svg></span><span><b>${esc(c)}</b><small>${esc(q)} ↗</small></span></a>`).join("")}</div></div>
+    <div class="stack"><span class="eyebrow">Learning websites</span>${siteList(q)}</div>`;
+}
+
+/* ================= profile ================= */
+function renderProfile() {
+  const p = S.profile || {};
+  const roleName = { student: "Medical student", resident: "Resident", practitioner: "Practitioner" }[p.role] || "";
+  const rows = [["Role", roleName], ["Name", p.name], [p.role === "resident" ? "Institution" : "University", p.university], ["Year of study", p.year ? "Year " + p.year : ""], ["Specialty", p.specialty], ["Postgraduate year", p.pgy ? "PGY-" + p.pgy : ""], ["Exam", p.exam], ["Country", p.country]].filter(([, v]) => v);
+  $("#view").innerHTML = `${notice()}<div class="stack"><span class="eyebrow">Profile</span><h1>${esc(p.name || "Your profile")}</h1></div>
+    <div class="card stack">${rows.map(([k, v]) => `<div class="mastery-row"><span class="muted">${esc(k)}</span><span>${esc(v)}</span></div>`).join("")}</div>
+    <div class="row"><button class="btn quiet" data-act="edit-profile">Edit profile</button></div>
+    <div class="card stack"><b>Your data</b><p class="muted small" style="margin:0">${S.saved ? "Your profile, uploads, questions and progress are saved privately to your claude.ai account for this page. Nobody else who opens Nisome can see them, including its owner." : "This visit isn't being saved."} AI requests use your own Claude usage.</p>
+      <div class="row"><button class="btn danger" data-act="wipe">Delete my library</button></div><div id="wipe-confirm"></div></div>
+    <p class="muted small">Nisome is for education and clinical decision support. AI answers can be wrong or out of date: verify them, follow local protocols, and never use the app as the only basis for patient care.</p>`;
+}
+
+/* ================= events ================= */
+function alertBox(msg) {
+  const v = $("#view"); const b = document.createElement("div"); b.className = "banner bad"; b.textContent = msg; b.setAttribute("role", "alert");
+  v.prepend(b); setTimeout(() => b.remove(), 9000);
+}
+document.addEventListener("click", async (e) => {
+  const t = e.target.closest("[data-act]"); if (!t) return;
+  const a = t.dataset.act;
+  if (a === "pick") return $("#file").click();
+  if (a === "open-doc") { S.docTab = "summary"; return go("doc-" + t.dataset.id); }
+  if (a === "doc-tab") { S.docTab = t.dataset.tab; return renderDoc(); }
+  if (a === "del-doc") {
+    if (t.dataset.confirm !== "1") { t.dataset.confirm = "1"; t.textContent = "Tap again to delete"; t.classList.add("danger"); setTimeout(() => { if (t.isConnected) { t.dataset.confirm = ""; t.textContent = "Delete"; } }, 4000); return; }
+    const id = t.dataset.id; go("library"); await S.store.deleteDoc(id).catch((err) => alertBox(errText(err))); delete S.chunkCache[id]; return;
+  }
+  if (a === "q-filter") { $("#pane-quiz").dataset.filter = t.dataset.f; S.pinned = new Set(); return renderQuizPane(currentDoc()); }
+  if (a === "mcq") return answerMcq(t.dataset.qid, +t.dataset.i);
+  if (a === "short") return answerShort(t.dataset.qid);
+  if (a === "more-q") {
+    const d = currentDoc(); if (!d) return;
+    const btns = [...document.querySelectorAll('[data-act="more-q"]')]; btns.forEach((b) => (b.disabled = true)); const old = t.textContent; t.textContent = "Writing questions…";
+    const err = $("#q-err"); err.hidden = true;
+    $("#pane-quiz").dataset.filter = "due";
+    try { await makeQuestions(d, 5, t.dataset.focus === "weak"); } catch (x) { err.textContent = errText(x); err.hidden = false; }
+    btns.forEach((b) => (b.disabled = false)); t.textContent = old; return;
+  }
+  if (a === "discuss") {
+    const q = S.questions.find((x) => x.id === t.dataset.qid); if (!q) return;
+    const st = S.qState[q.id] || {};
+    const mine = q.type === "mcq" ? (st.picked ?? q.lastAnswer) : (st.text || q.lastAnswer || "");
+    S.docTab = "ask"; renderDoc();
+    return sendChat("doc:" + S.docId, `Help me understand this question from my material.\n\n${q.question}${q.type === "mcq" ? "\n" + q.choices.map((c, i) => `${LETTERS[i]}. ${c}`).join("\n") : ""}\n\nMy answer: ${q.type === "mcq" && typeof mine === "number" ? LETTERS[mine] : mine}`);
+  }
+  if (a === "part-summary") {
+    const d = currentDoc(); const out = $("#part-out"); const i = +t.dataset.i;
+    out.innerHTML = `<p class="thinking">Summarizing ${esc(d.partLabels?.[i] || "this part")}…</p>`;
+    try {
+      const part = (await partsFor(d))[i];
+      await ask(`Summarize this part (${part.label}) of "${d.summary?.title || d.title}" in detail for ${levelOf(S.profile)}: the main ideas, key facts and numbers, with page references. Use Markdown headings and bullets, 250-450 words.\n\n<material>\n${part.text}\n</material>`, { cache: { gcTime: 86400000 }, onText: ({ text }) => { out.innerHTML = `<div class="card md">${md(text)}</div>`; } });
+    } catch (x) { out.innerHTML = `<p class="err small">${esc(errText(x))}</p>`; }
+    return;
+  }
+  if (a === "chat-starter") return sendChat(t.dataset.key, t.dataset.text);
+  if (a === "chat-reset") { S.chats[t.dataset.key] = []; ctl[t.dataset.key]?.abort(); return paintThread(t.dataset.key); }
+  if (a === "tutor-subj") { tutorSubject = t.dataset.s; document.querySelectorAll('[data-act="tutor-subj"]').forEach((b) => b.setAttribute("aria-pressed", b.dataset.s === tutorSubject)); return; }
+  if (a === "prac-mode") { S.practice.mode = t.dataset.m; return renderPractice(); }
+  if (a === "prac-subj") { S.practice.subject = t.dataset.s; document.querySelectorAll('[data-act="prac-subj"]').forEach((b) => b.setAttribute("aria-pressed", b.dataset.s === S.practice.subject)); return; }
+  if (a === "bank-pick") {
+    const P = S.practice; const q = P.q || EXAMPLE_Q; if (P.picked !== null) return; P.picked = +t.dataset.i;
+    if (!q.example) { P.score.total++; if (P.picked === q.answer) P.score.right++; try { localStorage.setItem("nisome-score", JSON.stringify(P.score)); } catch {} }
+    return renderBank();
+  }
+  if (a === "bank-new") return newBankQuestion();
+  if (a === "bank-reset") { S.practice.score = { right: 0, total: 0 }; try { localStorage.setItem("nisome-score", JSON.stringify(S.practice.score)); } catch {} return renderBank(); }
+  if (a === "case-start") { ctl.case?.abort(); S.chats.case = []; paintThread("case"); t.textContent = "New case"; return sendChat("case", "Start a new case now."); }
+  if (a === "case-dx") { const i = chatEl("case")?.querySelector("[data-chat-input]"); if (i) { if (!i.value.startsWith("DIAGNOSIS:")) i.value = "DIAGNOSIS: " + i.value; i.focus(); } return; }
+  if (a === "vq") { videoQuery = t.dataset.q; return renderVideos(); }
+  if (a === "edit-profile") { ob = { ...S.profile }; return renderOnboarding(); }
+  if (a === "ob-role") { ob.role = t.dataset.role; ob.name = $("#ob-name")?.value ?? ob.name; return renderOnboarding(); }
+  if (a === "ob-uni") { $("#ob-uni").value = t.dataset.name; const c = $("#ob-country"); if (c && !c.value) c.value = t.dataset.country; $("#ob-sugg").innerHTML = ""; return; }
+  if (a === "ob-cancel") { ob = null; return render(); }
+  if (a === "wipe") {
+    $("#wipe-confirm").innerHTML = `<div class="banner bad stack"><span>Delete all ${S.docs.length} documents with their questions and progress? This can't be undone.</span><div class="row"><button class="btn danger" data-act="wipe-yes">Delete everything</button><button class="btn quiet" data-act="wipe-no">Cancel</button></div></div>`; return;
+  }
+  if (a === "wipe-no") { $("#wipe-confirm").innerHTML = ""; return; }
+  if (a === "wipe-yes") { t.disabled = true; t.textContent = "Deleting…"; for (const d of [...S.docs]) await S.store.deleteDoc(d.id).catch(() => {}); S.chunkCache = {}; $("#wipe-confirm").innerHTML = `<p class="muted small">Your library was deleted.</p>`; return; }
+});
+document.addEventListener("submit", (e) => {
+  const f = e.target;
+  if (f.id === "ob-form") { e.preventDefault(); return saveOnboarding(); }
+  if (f.dataset.actForm === "chat") {
+    e.preventDefault(); const key = f.dataset.key;
+    if (ctl[key]) { ctl[key].abort(); return; }
+    const i = f.querySelector("[data-chat-input]"); const v = i.value; i.value = ""; sendChat(key, v); return;
+  }
+  if (f.dataset.actForm === "video") { e.preventDefault(); const v = $("#vq").value.trim(); if (v.length > 1) { videoQuery = v; renderVideos(); } }
+});
+document.addEventListener("keydown", (e) => {
+  if (e.target.matches?.("[data-chat-input]") && e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); e.target.form.requestSubmit(); }
+});
+document.addEventListener("input", (e) => {
+  const id = e.target.dataset?.qtext; if (id) { (S.qState[id] = S.qState[id] || {}).text = e.target.value; }
+  if (e.target.id === "socratic") socratic = e.target.checked;
+});
+document.addEventListener("change", (e) => { if (e.target.id === "socratic") socratic = e.target.checked; });
+$("#file").addEventListener("change", (e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) handleFile(f); });
+
+/* ================= start ================= */
+let unsubDocs = null;
+function startDocsWatch() {
+  if (unsubDocs) unsubDocs();
+  S.docsLoaded = false;
+  const timer = setTimeout(() => { if (!S.docsLoaded) { S.docsLoaded = true; render(); } }, 10000);
+  unsubDocs = S.store.watchDocs((list) => {
+    clearTimeout(timer); S.docs = list; S.docsLoaded = true;
+    if (S.route === "library") refreshDocRows(); else if (S.route === "doc") renderDoc(); else if (S.route === "videos" && !$("#vq")?.matches(":focus")) renderVideos();
+  }, () => { clearTimeout(timer); S.docsLoaded = true; render(); });
+}
+
+(async function boot() {
+  readRoute();
+  render();
+  const [sample, db, user] = await Promise.all([samplePromise, use("db"), use("user")]);
+  S.sampleOk = !!sample;
+  S.limits = sample ? await sample.limits().catch(() => null) : null;
+  S.db = db; S.user = user;
+  S.uid = user ? await user.id().catch(() => null) : null;
+  if (user) { try { S.meName = (await user.me()).name || ""; } catch {} }
+  S.store = db && S.uid ? dbStore(db, S.uid) : memoryStore();
+  S.saved = S.store.kind === "db";
+  try { S.profile = await S.store.getProfile(); } catch { S.store = memoryStore(); S.saved = false; }
+  startDocsWatch();
+  S.ready = true;
+  render();
+})();
+</script>
