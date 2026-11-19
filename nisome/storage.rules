@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // A file may be uploaded only to the slot that createUpload reserved: same person,
+    // same type, under 200 MB, while the library document still says "uploading".
+    match /users/{uid}/uploads/{docId}/{fileName} {
+      function reserved() {
+        return firestore.get(/databases/(default)/documents/users/$(uid)/docs/$(docId)).data;
+      }
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.size < 200 * 1024 * 1024
+        && reserved().status == 'uploading'
+        && request.resource.contentType == reserved().mimeType;
+      allow update, delete: if false;
+    }
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
