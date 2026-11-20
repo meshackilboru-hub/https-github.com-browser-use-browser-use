@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tanzania Stays · Book hotels, lodges, apartments & motels</title>
+  <meta name="description" content="Book hotels, lodges, apartments and motels across Tanzania with live availability and mobile-money payment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23EA580C'/%3E%3Cpath d='M6 22l7-9 4 5 3-3 6 7z' fill='%23fff'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a class="skip" href="#results">Skip to stays</a>
+
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Tanzania Stays home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="currentColor"/><path d="M6 22l7-9 4 5 3-3 6 7z" fill="#fff"/></svg>
+      <span>Tanzania Stays</span>
+    </a>
+    <div class="live" id="live" role="status" aria-live="polite">
+      <span class="dot"></span><span id="liveText">Connecting…</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="hero-inner">
+      <p class="eyebrow reveal">Karibu Tanzania</p>
+      <h1 class="reveal">Find your stay, from Zanzibar’s shores to Kilimanjaro’s foothills.</h1>
+      <p class="lede reveal">Live room availability. Pay instantly with M-Pesa, Mixx by Yas, Airtel Money, HaloPesa or card.</p>
+
+      <form class="search reveal" id="search" autocomplete="off">
+        <label class="field">
+          <span>Where</span>
+          <select name="region" id="region"><option value="all">All of Tanzania</option></select>
+        </label>
+        <label class="field">
+          <span>Check-in</span>
+          <input type="date" name="checkIn" id="checkIn" required>
+        </label>
+        <label class="field">
+          <span>Check-out</span>
+          <input type="date" name="checkOut" id="checkOut" required>
+        </label>
+        <label class="field small">
+          <span>Guests</span>
+          <input type="number" name="guests" id="guests" min="1" max="10" value="2" required>
+        </label>
+        <button class="btn primary" type="submit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          Search
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <main id="results">
+    <div class="toolbar">
+      <div class="chips" role="radiogroup" aria-label="Property type" id="chips">
+        <button type="button" class="chip active" data-type="all" role="radio" aria-checked="true">All stays</button>
+        <button type="button" class="chip" data-type="hotel" role="radio" aria-checked="false">Hotels</button>
+        <button type="button" class="chip" data-type="lodge" role="radio" aria-checked="false">Lodges</button>
+        <button type="button" class="chip" data-type="apartment" role="radio" aria-checked="false">Apartments</button>
+        <button type="button" class="chip" data-type="motel" role="radio" aria-checked="false">Motels</button>
+      </div>
+      <p class="count" id="count" aria-live="polite"></p>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer class="foot">
+    <p>Tanzania Stays · Prices in Tanzanian Shillings (TZS) per night · Rooms are held for you while you pay.</p>
+  </footer>
+
+  <dialog id="modal" aria-labelledby="modalTitle">
+    <div class="modal-card" id="modalBody"></div>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
